@@ -39,7 +39,7 @@ class LoginPage extends GetView<LoginController> {
                 const SizedBox(height: 24),
 
                 AppTextField(
-                  label: "Username",
+                  label: "Email",
                   icon: Icons.person_outline,
                   controller: controller.emailController,
                 ),
@@ -61,7 +61,7 @@ class LoginPage extends GetView<LoginController> {
                   () => AppButton(
                     text: "Login",
                     isLoading: controller.isLoading.value,
-                    onPressed: controller.login,
+                    onPressed: controller.auth,
                   ),
                 ),
                 SizedBox(height: 10),

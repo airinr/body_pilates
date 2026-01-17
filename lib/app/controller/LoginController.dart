@@ -24,7 +24,7 @@ class LoginController extends GetxController {
   }
 
   // 🔹 LOGIN FIREBASE
-  Future<void> login() async {
+  Future<void> auth() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
