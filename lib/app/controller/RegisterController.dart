@@ -45,6 +45,7 @@ class RegisterController extends GetxController {
         'username': usernameController.text,
         'email': emailController.text,
         'createdAt': Timestamp.now(),
+        'role': "member",
       });
 
       isLoading.value = false;

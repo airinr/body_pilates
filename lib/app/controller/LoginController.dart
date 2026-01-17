@@ -52,6 +52,8 @@ class LoginController extends GetxController {
           .doc(userCredential.user!.uid)
           .get();
 
+      final role = userDoc['role'];
+
       isLoading.value = false;
 
       if (!userDoc.exists) {
@@ -69,7 +71,11 @@ class LoginController extends GetxController {
       );
 
       // 4️⃣ Navigasi ke Home
-      Get.offAllNamed(Routes.register);
+      if (role == 'instructor') {
+        Get.offAllNamed(Routes.instructorMenu);
+      } else {
+        Get.offAllNamed(Routes.register);
+      }
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;
 
