@@ -1,62 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../routes/app_routes.dart';
 
 class LoginController extends GetxController {
-  // Controller input
-  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // State
   var isLoading = false.obs;
   var isPasswordHidden = true.obs;
 
-  // Toggle show/hide password
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   void togglePassword() {
     isPasswordHidden.value = !isPasswordHidden.value;
   }
 
-  // Login logic
-  void login() async {
-    final username = usernameController.text.trim();
+  // 🔹 PINDAH KE REGISTER
+  void goToRegister() {
+    Get.toNamed(Routes.register);
+  }
+
+  // 🔹 LOGIN FIREBASE
+  Future<void> login() async {
+    final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    if (username.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       Get.snackbar(
         "Error",
-        "Username dan password tidak boleh kosong",
+        "Email dan password tidak boleh kosong",
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
     }
 
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    // Simulasi API call
-    await Future.delayed(const Duration(seconds: 2));
+      // 1️⃣ Login Firebase Auth
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    isLoading.value = false;
+      // 2️⃣ Ambil data user dari Firestore
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
 
-    // Dummy login
-    if (username == "admin" && password == "123456") {
+      isLoading.value = false;
+
+      if (!userDoc.exists) {
+        Get.snackbar("Error", "Data user tidak ditemukan");
+        return;
+      }
+
+      final userData = userDoc.data() as Map<String, dynamic>;
+
+      // 3️⃣ Login sukses
       Get.snackbar(
         "Success",
-        "Login berhasil",
+        "Selamat datang ${userData['name']}",
         snackPosition: SnackPosition.BOTTOM,
       );
 
-      // Get.offAllNamed('/home');
-    } else {
-      Get.snackbar(
-        "Login Gagal",
-        "Username atau password salah",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      // 4️⃣ Navigasi ke Home
+      Get.offAllNamed(Routes.register);
+    } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
+
+      String message = "Login gagal";
+      if (e.code == 'user-not-found') {
+        message = "Email tidak terdaftar";
+      } else if (e.code == 'wrong-password') {
+        message = "Password salah";
+      }
+
+      Get.snackbar("Login Gagal", message);
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar("Error", e.toString());
     }
   }
 
   @override
   void onClose() {
-    usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.onClose();
   }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "169772912423",
+    "project_id": "body-pilates-200a2",
+    "storage_bucket": "body-pilates-200a2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169772912423:android:7d3e431707c4f6e5666302",
+        "android_client_info": {
+          "package_name": "com.example.body_pilates"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7MEgHhIlRg01h-meboVi39CXiN_bdOAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
