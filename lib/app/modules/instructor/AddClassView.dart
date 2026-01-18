@@ -82,7 +82,7 @@ class AddClassView extends GetView<AddClassController> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: controller.saveClass,
+                        onPressed: controller.saveData,
                         child: const Text(
                           'Simpan Kelas',
                           style: TextStyle(fontSize: 16),

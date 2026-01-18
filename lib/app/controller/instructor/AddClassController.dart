@@ -20,7 +20,7 @@ class AddClassController extends GetxController {
     dateC.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 
-  bool validate() {
+  bool validateInput() {
     if (titleC.text.isEmpty ||
         dateC.text.isEmpty ||
         timeC.text.isEmpty ||
@@ -37,8 +37,8 @@ class AddClassController extends GetxController {
     return true;
   }
 
-  Future<void> saveClass() async {
-    if (!validate()) return;
+  Future<void> saveData() async {
+    if (!validateInput()) return;
 
     isLoading.value = true;
 
