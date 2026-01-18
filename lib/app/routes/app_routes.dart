@@ -3,4 +3,5 @@ abstract class Routes {
   static const register = '/register';
   static const instructorMenu = '/instructorMenu';
   static const addClass = '/addClass';
+  static const manageClass = '/manageClass';
 }

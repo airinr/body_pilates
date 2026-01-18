@@ -51,11 +51,19 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
                     Text("💰 Rp ${item.price}"),
                   ],
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                trailing: TextButton(
                   onPressed: () {
-                    controller.deleteClass(item.idClass);
+                    Get.toNamed('/manageClass', arguments: item);
                   },
+                  child: const Text(
+                    "Detail",
+                    style: TextStyle(
+                      color: Colors
+                          .blue, 
+                      fontWeight:
+                          FontWeight.bold, 
+                    ),
+                  ),
                 ),
               ),
             );
