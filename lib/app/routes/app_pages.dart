@@ -1,5 +1,8 @@
+import 'package:body_pilates/app/bindings/instructor/addClassBinding.dart';
+import 'package:body_pilates/app/bindings/instructor/instructorMenuBinding.dart';
 import 'package:body_pilates/app/bindings/registerBindings.dart';
 import 'package:body_pilates/app/modules/home/registerPage.dart';
+import 'package:body_pilates/app/modules/instructor/AddClassView.dart';
 import 'package:body_pilates/app/modules/instructor/InstructorMenuView.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +25,12 @@ class AppPages {
     GetPage(
       name: Routes.instructorMenu,
       page: () => InstructorMenuView(),
-      binding: LoginBinding(),
+      binding: InstructorMenuBinding(),
+    ),
+    GetPage(
+      name: Routes.addClass,
+      page: () => AddClassView(),
+      binding: AddClassBinding(),
     ),
   ];
 }
