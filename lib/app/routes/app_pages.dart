@@ -1,9 +1,11 @@
 import 'package:body_pilates/app/bindings/instructor/addClassBinding.dart';
+import 'package:body_pilates/app/bindings/instructor/generateQRBinding.dart';
 import 'package:body_pilates/app/bindings/instructor/instructorMenuBinding.dart';
 import 'package:body_pilates/app/bindings/instructor/manageClassBinding.dart';
 import 'package:body_pilates/app/bindings/registerBindings.dart';
 import 'package:body_pilates/app/modules/home/registerPage.dart';
 import 'package:body_pilates/app/modules/instructor/AddClassView.dart';
+import 'package:body_pilates/app/modules/instructor/GenerateQRView.dart';
 import 'package:body_pilates/app/modules/instructor/InstructorMenuView.dart';
 import 'package:body_pilates/app/modules/instructor/ManageClassView.dart';
 import 'package:get/get.dart';
@@ -38,6 +40,11 @@ class AppPages {
       name: Routes.manageClass,
       page: () => ManageClassView(),
       binding: ManageClassBinding(),
+    ),
+    GetPage(
+      name: Routes.generateQR,
+      page: () => GenerateQRView(),
+      binding: GenerateQRBinding(),
     ),
   ];
 }

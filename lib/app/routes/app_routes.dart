@@ -4,4 +4,5 @@ abstract class Routes {
   static const instructorMenu = '/instructorMenu';
   static const addClass = '/addClass';
   static const manageClass = '/manageClass';
+  static const generateQR = '/generateQR';
 }

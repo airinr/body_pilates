@@ -51,19 +51,38 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
                     Text("💰 Rp ${item.price}"),
                   ],
                 ),
-                trailing: TextButton(
-                  onPressed: () {
-                    Get.toNamed('/manageClass', arguments: item);
-                  },
-                  child: const Text(
-                    "Detail",
-                    style: TextStyle(
-                      color: Colors
-                          .blue, 
-                      fontWeight:
-                          FontWeight.bold, 
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 🔹 Button Scan QR
+                    IconButton(
+                      icon: const Icon(
+                        Icons.qr_code_scanner,
+                        color: Colors.green,
+                      ),
+                      tooltip: "Generate QR",
+                      onPressed: () {
+                        Get.toNamed(
+                          '/generateQR',
+                          arguments: item, // kirim data kelas
+                        );
+                      },
                     ),
-                  ),
+
+                    // 🔹 Button Detail
+                    TextButton(
+                      onPressed: () {
+                        Get.toNamed('/manageClass', arguments: item);
+                      },
+                      child: const Text(
+                        "Detail",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

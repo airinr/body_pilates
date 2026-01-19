@@ -38,12 +38,14 @@ class AddClassController extends GetxController {
   }
 
   Future<void> saveData() async {
+    final newClassRef = _db.push();
     if (!validateInput()) return;
 
     isLoading.value = true;
 
     try {
       await _db.push().set({
+        'idClass': newClassRef.key,
         'title': titleC.text,
         'date': dateC.text,
         'time': timeC.text,
