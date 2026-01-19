@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class UserModel {
   final String uid;
   final String email;
@@ -22,6 +24,11 @@ class UserModel {
       'username': username,
       'createdAt': createdAt.toIso8601String(),
     };
+  }
+
+  // Method logout
+  Future<void> Logout() async {
+    await FirebaseAuth.instance.signOut();
   }
 
   // Convert dari Firestore ke Object

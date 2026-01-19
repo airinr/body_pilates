@@ -10,6 +10,11 @@ import 'package:body_pilates/app/modules/instructor/InstructorMenuView.dart';
 import 'package:body_pilates/app/modules/instructor/ManageClassView.dart';
 import 'package:get/get.dart';
 
+// Package member
+import '../bindings/member/UserMenuBinding.dart';
+import '../modules/member/UserMenuView.dart';
+import '../controller/member/UserMenuController.dart';
+
 import '../modules/home/loginPage.dart';
 import '../bindings/loginBindings.dart';
 import 'app_routes.dart';
@@ -45,6 +50,11 @@ class AppPages {
       name: Routes.generateQR,
       page: () => GenerateQRView(),
       binding: GenerateQRBinding(),
+    ),
+    GetPage(
+      name: Routes.userMenu,
+      page: () => UserMenuView(),
+      binding: UserMenuBinding(),
     ),
   ];
 }

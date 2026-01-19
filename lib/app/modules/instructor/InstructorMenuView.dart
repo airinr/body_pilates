@@ -5,12 +5,26 @@ import '../../controller/instructor/InstructorMenuController.dart';
 class InstructorMenuView extends GetView<InstructorMenuController> {
   const InstructorMenuView({super.key});
 
+  void onLogoutClicked() {
+    // Panggil logic di controller
+    controller.logout();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Menu Instructor"),
         backgroundColor: Colors.pinkAccent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            tooltip: 'Logout',
+            onPressed: () {
+              onLogoutClicked();
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pinkAccent,

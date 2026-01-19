@@ -5,4 +5,7 @@ abstract class Routes {
   static const addClass = '/addClass';
   static const manageClass = '/manageClass';
   static const generateQR = '/generateQR';
+
+  // Rute untuk member
+  static const userMenu = '/userMenu';
 }
