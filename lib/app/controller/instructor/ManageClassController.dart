@@ -5,32 +5,77 @@ import '../../data/models/classModel.dart';
 
 class ManageClassController extends GetxController {
   final DatabaseReference _db = FirebaseDatabase.instance.ref('classes');
-  
-  // Data yang diterima dari halaman sebelumnya
+
+  // ===============================
+  // DATA KELAS
+  // ===============================
   late ClassModel data;
 
-  // Controller untuk TextFields
+  // ===============================
+  // TEXT CONTROLLERS
+  // ===============================
   late TextEditingController titleController;
   late TextEditingController dateController;
   late TextEditingController timeController;
   late TextEditingController priceController;
 
+  // ===============================
+  // PARTICIPANTS (🔥 TAMBAHAN)
+  // ===============================
+  final RxMap<String, dynamic> participants = <String, dynamic>{}.obs;
+
   @override
   void onInit() {
     super.onInit();
-    // Ambil data yang dikirim via arguments
+
+    // Ambil data kelas dari arguments
     if (Get.arguments != null) {
       data = Get.arguments as ClassModel;
-      
-      // Isi form dengan data yang ada (Pre-fill)
+
+      // Prefill form
       titleController = TextEditingController(text: data.title);
       dateController = TextEditingController(text: data.date);
       timeController = TextEditingController(text: data.time);
       priceController = TextEditingController(text: data.price.toString());
+
+      // 🔥 LOAD PARTICIPANTS
+      loadParticipants();
     }
   }
 
-  // Sesuai Diagram: submitEdit()
+  // ===============================
+  // LOAD PARTICIPANTS REALTIME
+  // ===============================
+  void loadParticipants() {
+    _db.child(data.idClass).child('participants').onValue.listen((event) {
+      final value = event.snapshot.value;
+
+      if (value is Map) {
+        participants.assignAll(Map<String, dynamic>.from(value));
+      } else {
+        participants.clear();
+      }
+    });
+  }
+
+  // ===============================
+  // FILTER PARTICIPANTS
+  // ===============================
+  Map<String, dynamic> get paidParticipants {
+    return Map.fromEntries(
+      participants.entries.where((e) => e.value['paymentStatus'] == 'Paid'),
+    );
+  }
+
+  Map<String, dynamic> get unpaidParticipants {
+    return Map.fromEntries(
+      participants.entries.where((e) => e.value['paymentStatus'] != 'Paid'),
+    );
+  }
+
+  // ===============================
+  // SUBMIT EDIT KELAS
+  // ===============================
   void submitEdit() async {
     if (!validateInput()) return;
 
@@ -41,31 +86,46 @@ class ManageClassController extends GetxController {
         'time': timeController.text,
         'price': int.parse(priceController.text),
       });
-      
-      Get.back(); // Kembali ke menu utama
-      Get.snackbar('Sukses', 'Data kelas berhasil diupdate', 
-          backgroundColor: Colors.green, colorText: Colors.white);
+
+      Get.back();
+      Get.snackbar(
+        'Sukses',
+        'Data kelas berhasil diupdate',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.snackbar('Error', 'Gagal update kelas');
     }
   }
 
-  // Sesuai Diagram: confirmDelete()
+  // ===============================
+  // DELETE KELAS
+  // ===============================
   void confirmDelete() async {
     try {
       await _db.child(data.idClass).remove();
-      
-      Get.back(); // Kembali ke menu utama
-      Get.snackbar('Sukses', 'Kelas berhasil dihapus',
-           backgroundColor: Colors.redAccent, colorText: Colors.white);
+
+      Get.back();
+      Get.snackbar(
+        'Sukses',
+        'Kelas berhasil dihapus',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.snackbar('Error', 'Gagal menghapus kelas');
     }
   }
 
-  // Sesuai Diagram: validateInput()
+  // ===============================
+  // VALIDASI INPUT
+  // ===============================
   bool validateInput() {
-    if (titleController.text.isEmpty || priceController.text.isEmpty) {
+    if (titleController.text.isEmpty ||
+        dateController.text.isEmpty ||
+        timeController.text.isEmpty ||
+        priceController.text.isEmpty) {
       Get.snackbar('Error', 'Semua field harus diisi');
       return false;
     }

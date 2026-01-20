@@ -86,8 +86,10 @@ class UserMenuController extends GetxController {
   Future<void> joinClass(ClassModel classData) async {
     try {
       final String memberId = member.uid;
+      final String memberName = member.fullName;
 
-      final DatabaseReference participantRef = _db
+      final DatabaseReference participantRef = FirebaseDatabase.instance
+          .ref('classes')
           .child(classData.idClass)
           .child('participants')
           .child(memberId);
@@ -97,28 +99,27 @@ class UserMenuController extends GetxController {
       if (snapshot.exists) {
         Get.snackbar(
           "Info",
-          "Anda sudah mengambil kelas ini",
+          "Anda sudah mengikuti kelas ini",
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
       }
 
-      // 🔥 Simpan participant DI DALAM CLASS
+      // 🔥 SIMPAN PARTICIPANT + NAMA
       await participantRef.set({
         'memberId': memberId,
+        'memberName': memberName, // ✅ DISIMPAN
         'joinedAt': DateTime.now().toIso8601String(),
-        'paymentStatus': 'unpaid',
+        'paymentStatus': 'Unpaid',
       });
 
-      // 🔄 Update data member di memori
+      // 🔄 Update lokal
       member.addEnrolledClass(classData.idClass);
-
-      // 🔄 Refresh UI
       allClasses.refresh();
 
       Get.snackbar(
         "Berhasil",
-        "Anda berhasil mengambil kelas ${classData.title}",
+        "Anda berhasil mengikuti kelas ${classData.title}",
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
