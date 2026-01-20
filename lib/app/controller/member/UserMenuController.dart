@@ -8,13 +8,13 @@ import '../../data/models/classModel.dart';
 import '../../data/models/memberModel.dart';
 
 class UserMenuController extends GetxController {
+  // 🔹 DB Kelas
   final DatabaseReference _db = FirebaseDatabase.instance.ref('classes');
 
-  // 1. Ambil data Member yang sudah login (Disimpan di LoginController)
-  // Kita pakai 'late' atau langsung assign karena pasti sudah ada di memori
+  // 🔹 Data Member Login
   final MemberModel member = Get.find<MemberModel>();
 
-  // List semua kelas dari Firebase
+  // 🔹 Semua kelas
   final RxList<ClassModel> allClasses = <ClassModel>[].obs;
   final RxBool isLoading = false.obs;
 
@@ -23,26 +23,29 @@ class UserMenuController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadClassList(); // Sesuai diagram
+    loadClassList();
   }
 
-  // 2. LOGIC PEMISAHAN KELAS (Enrolled vs Available)
-  // Ini akan otomatis ter-update kalau 'allClasses' berubah
+  // ===============================
+  // PEMISAHAN KELAS
+  // ===============================
+
   List<ClassModel> get enrolledClasses {
     return allClasses.where((item) {
-      // Panggil method isEnrolled punya MemberModel
       return member.isEnrolled(item.idClass);
     }).toList();
   }
 
   List<ClassModel> get availableClasses {
     return allClasses.where((item) {
-      // Kebalikannya, ambil yang belum di-enroll
       return !member.isEnrolled(item.idClass);
     }).toList();
   }
 
-  // 3. Fetch Data dari Firebase (Sama seperti instructor tapi read-only)
+  // ===============================
+  // LOAD DATA KELAS
+  // ===============================
+
   void loadClassList() {
     isLoading.value = true;
     _classSubscription?.cancel();
@@ -64,8 +67,7 @@ class UserMenuController extends GetxController {
             }
           });
         }
-        
-        // Simpan ke RxList, otomatis UI yang pake Obx bakal berubah
+
         allClasses.assignAll(temp);
         isLoading.value = false;
       },
@@ -76,16 +78,92 @@ class UserMenuController extends GetxController {
     );
   }
 
-  // 4. Handle Klik Kelas (Navigasi ke Detail)
-  // Sesuai diagram: onClassClicked
+  // ===============================
+  // JOIN / AMBIL KELAS
+  // PARTICIPANT MASUK KE CLASS
+  // ===============================
+
+  Future<void> joinClass(ClassModel classData) async {
+    try {
+      final String memberId = member.uid;
+
+      final DatabaseReference participantRef = _db
+          .child(classData.idClass)
+          .child('participants')
+          .child(memberId);
+
+      // 🔎 Cek apakah sudah join
+      final snapshot = await participantRef.get();
+      if (snapshot.exists) {
+        Get.snackbar(
+          "Info",
+          "Anda sudah mengambil kelas ini",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      // 🔥 Simpan participant DI DALAM CLASS
+      await participantRef.set({
+        'memberId': memberId,
+        'joinedAt': DateTime.now().toIso8601String(),
+        'paymentStatus': 'unpaid',
+      });
+
+      // 🔄 Update data member di memori
+      member.addEnrolledClass(classData.idClass);
+
+      // 🔄 Refresh UI
+      allClasses.refresh();
+
+      Get.snackbar(
+        "Berhasil",
+        "Anda berhasil mengambil kelas ${classData.title}",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Gagal mengambil kelas",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> markAsPaid(ClassModel classData) async {
+    try {
+      await FirebaseDatabase.instance
+          .ref('classes')
+          .child(classData.idClass)
+          .child('participants')
+          .child(member.uid)
+          .update({'paymentStatus': 'Paid'});
+
+      // refresh UI
+      allClasses.refresh();
+
+      Get.snackbar(
+        "Pembayaran",
+        "Status pembayaran berhasil diperbarui",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar("Error", "Gagal update status pembayaran");
+    }
+  }
+
+  // ===============================
+  // DETAIL KELAS
+  // ===============================
+
   void onClassClicked(String idClass) {
-    // Kita kirim ID Class ke halaman detail
-    // Nanti di halaman detail baru ada tombol "Enroll"
     // Get.toNamed('/classDetail', arguments: idClass);
   }
 
-  // 5. Logout Khusus Member
-  // Sesuai diagram: logoutClicked
+  // ===============================
+  // LOGOUT
+  // ===============================
+
   void logoutClicked() {
     Get.defaultDialog(
       title: "Logout",
@@ -96,12 +174,9 @@ class UserMenuController extends GetxController {
       buttonColor: Colors.pinkAccent,
       onConfirm: () async {
         try {
-          // Panggil fungsi Logout dari parent (UserModel) lewat MemberModel
-          await member.Logout(); 
-          
-          // HAPUS data member dari memori agar bersih
-          Get.delete<MemberModel>(force: true); 
+          await member.Logout();
 
+          Get.delete<MemberModel>(force: true);
           Get.offAllNamed('/login');
         } catch (e) {
           Get.snackbar("Error", "Gagal logout: $e");

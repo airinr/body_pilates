@@ -4,6 +4,7 @@ class ClassModel {
   final String date;
   final String time;
   final int price;
+  final Map<String, dynamic> participants;
 
   ClassModel({
     required this.idClass,
@@ -11,7 +12,8 @@ class ClassModel {
     required this.date,
     required this.time,
     required this.price,
-  });
+    Map<String, dynamic>? participants,
+  }) : participants = participants ?? {};
 
   factory ClassModel.fromMap(String id, Map data) {
     return ClassModel(
@@ -20,6 +22,7 @@ class ClassModel {
       date: data['date'],
       time: data['time'],
       price: data['price'],
+      participants: Map<String, dynamic>.from(data['participants'] ?? {}),
     );
   }
 

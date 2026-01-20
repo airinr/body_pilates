@@ -1,7 +1,7 @@
 import 'userModel.dart';
 
 class MemberModel extends UserModel {
-  // Atribut spesifik sesuai diagram
+  // 🔹 List kelas yang diikuti (mutable)
   final List<String> enrolledClassIds;
 
   MemberModel({
@@ -10,37 +10,57 @@ class MemberModel extends UserModel {
     required String fullName,
     required String username,
     required DateTime createdAt,
-    this.enrolledClassIds = const [], // Default list kosong
-  }) : super(
-          uid: uid,
-          email: email,
-          fullName: fullName,
-          username: username,
-          createdAt: createdAt,
-        );
+    List<String>? enrolledClassIds,
+  }) : enrolledClassIds = enrolledClassIds ?? [],
+       super(
+         uid: uid,
+         email: email,
+         fullName: fullName,
+         username: username,
+         createdAt: createdAt,
+       );
 
-  // Method isEnrolled(idClass): boolean
+  // ===============================
+  // CEK SUDAH ENROLL ATAU BELUM
+  // ===============================
   bool isEnrolled(String idClass) {
     return enrolledClassIds.contains(idClass);
   }
 
-  // Method enrollClass(idClass): void
-  // Note: Ini biasanya cuma buat update lokal, aslinya nanti update ke Firebase
-  void enrollClass(String idClass) {
+  // ===============================
+  // TAMBAH KELAS
+  // ===============================
+  void addEnrolledClass(String idClass) {
     if (!enrolledClassIds.contains(idClass)) {
       enrolledClassIds.add(idClass);
     }
   }
 
-  // Factory untuk mapping dari Firestore (Termasuk data UserModel)
+  // ===============================
+  // FACTORY DARI FIREBASE (FIXED)
+  // ===============================
   factory MemberModel.fromFirestore(Map<String, dynamic> data, String uid) {
+    DateTime createdAt;
+
+    final rawCreatedAt = data['createdAt'];
+
+    if (rawCreatedAt is String) {
+      createdAt = DateTime.tryParse(rawCreatedAt) ?? DateTime.now();
+    } else if (rawCreatedAt is DateTime) {
+      createdAt = rawCreatedAt;
+    } else if (rawCreatedAt is int) {
+      // jaga-jaga kalau timestamp
+      createdAt = DateTime.fromMillisecondsSinceEpoch(rawCreatedAt);
+    } else {
+      createdAt = DateTime.now();
+    }
+
     return MemberModel(
       uid: uid,
       email: data['email'] ?? '',
       fullName: data['fullName'] ?? '',
       username: data['username'] ?? '',
-      createdAt: data['createdAt'] ?? '',
-      // Ambil list ID kelas yang diikuti dari Firestore
+      createdAt: createdAt,
       enrolledClassIds: List<String>.from(data['enrolledClassIds'] ?? []),
     );
   }
