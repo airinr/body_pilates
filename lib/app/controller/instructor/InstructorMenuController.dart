@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart'; 
 import 'package:firebase_database/firebase_database.dart';
 import '../../data/models/classModel.dart';
+import '../../data/models/instructorModel.dart';
+
 
 class InstructorMenuController extends GetxController {
   final DatabaseReference _db = FirebaseDatabase.instance.ref('classes');
@@ -9,15 +12,17 @@ class InstructorMenuController extends GetxController {
   final RxList<ClassModel> classList = <ClassModel>[].obs;
   final RxBool isLoading = false.obs;
 
+  final InstructorModel instructor = Get.find<InstructorModel>();
+
   StreamSubscription<DatabaseEvent>? _classSubscription;
 
   @override
   void onInit() {
     super.onInit();
-    fetchClasses();
+    loadAllClasses();
   }
 
-  void fetchClasses() {
+  void loadAllClasses() {
     isLoading.value = true;
 
     _classSubscription?.cancel();
@@ -50,23 +55,52 @@ class InstructorMenuController extends GetxController {
     );
   }
 
-  void addClass({
-    required String title,
-    required String date,
-    required String time,
-    required int price,
-  }) async {
-    try {
-      await _db.push().set({
-        'title': title,
-        'date': date,
-        'time': time,
-        'price': price,
-      });
-    } catch (e) {
-      Get.snackbar('Error', 'Gagal menambah kelas');
-    }
+  // Method baru untuk proses logout
+  void logout() {
+    Get.defaultDialog(
+      title: "Logout",
+      middleText: "Apakah Anda yakin ingin keluar?",
+      textConfirm: "Ya, Keluar",
+      textCancel: "Batal",
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () async {
+        try {
+          // 2. Panggil method Logout() punya parent (UserModel) lewat object child (Instructor)
+          // Ini sah banget di OOP
+          await instructor.Logout(); 
+          
+          // 3. PENTING: Hapus data instructor dari memori GetX
+          // Karena pas login kita set 'permanent: true', kita wajib hapus manual pas logout
+          // Biar kalau login pakai akun lain datanya gak nyangkut.
+          Get.delete<InstructorModel>(force: true); 
+
+          // 4. Balik ke halaman login
+          Get.offAllNamed('/login'); 
+        } catch (e) {
+          Get.snackbar("Error", "Gagal logout: $e");
+        }
+      },
+    );
   }
+
+  // void addClass({
+  //   required String title,
+  //   required String date,
+  //   required String time,
+  //   required int price,
+  // }) async {
+  //   try {
+  //     await _db.push().set({
+  //       'title': title,
+  //       'date': date,
+  //       'time': time,
+  //       'price': price,
+  //     });
+  //   } catch (e) {
+  //     Get.snackbar('Error', 'Gagal menambah kelas');
+  //   }
+  // }
 
   void deleteClass(String idClass) async {
     try {

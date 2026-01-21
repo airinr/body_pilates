@@ -5,12 +5,26 @@ import '../../controller/instructor/InstructorMenuController.dart';
 class InstructorMenuView extends GetView<InstructorMenuController> {
   const InstructorMenuView({super.key});
 
+  void onLogoutClicked() {
+    // Panggil logic di controller
+    controller.logout();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Menu Instructor"),
         backgroundColor: Colors.pinkAccent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            tooltip: 'Logout',
+            onPressed: () {
+              onLogoutClicked();
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pinkAccent,
@@ -51,11 +65,38 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
                     Text("💰 Rp ${item.price}"),
                   ],
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    controller.deleteClass(item.idClass);
-                  },
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 🔹 Button Scan QR
+                    IconButton(
+                      icon: const Icon(
+                        Icons.qr_code_scanner,
+                        color: Colors.green,
+                      ),
+                      tooltip: "Generate QR",
+                      onPressed: () {
+                        Get.toNamed(
+                          '/generateQR',
+                          arguments: item, // kirim data kelas
+                        );
+                      },
+                    ),
+
+                    // 🔹 Button Detail
+                    TextButton(
+                      onPressed: () {
+                        Get.toNamed('/manageClass', arguments: item);
+                      },
+                      child: const Text(
+                        "Detail",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
