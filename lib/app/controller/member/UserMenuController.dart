@@ -2,19 +2,16 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-// Import Model
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/models/classModel.dart';
 import '../../data/models/memberModel.dart';
 
 class UserMenuController extends GetxController {
-  // 🔹 DB Kelas
   final DatabaseReference _db = FirebaseDatabase.instance.ref('classes');
+  
+  // Mengambil instance member yang sedang login
+  MemberModel get member => Get.find<MemberModel>();
 
-  // 🔹 Data Member Login
-  final MemberModel member = Get.find<MemberModel>();
-
-  // 🔹 Semua kelas
   final RxList<ClassModel> allClasses = <ClassModel>[].obs;
   final RxBool isLoading = false.obs;
 
@@ -27,60 +24,87 @@ class UserMenuController extends GetxController {
   }
 
   // ===============================
-  // PEMISAHAN KELAS
+  // PEMISAHAN KELAS (FILTER)
   // ===============================
 
   List<ClassModel> get enrolledClasses {
-    return allClasses.where((item) {
-      return member.isEnrolled(item.idClass);
-    }).toList();
+    // FIX: Cek member masih ada di memori gak, biar gak crash
+    if (!Get.isRegistered<MemberModel>()) return []; 
+    return allClasses.where((item) => member.isEnrolled(item.idClass)).toList();
   }
 
   List<ClassModel> get availableClasses {
-    return allClasses.where((item) {
-      return !member.isEnrolled(item.idClass);
-    }).toList();
+    if (!Get.isRegistered<MemberModel>()) return [];
+    return allClasses.where((item) => !member.isEnrolled(item.idClass)).toList();
   }
 
   // ===============================
-  // LOAD DATA KELAS
+  // LOAD DATA KELAS (STREAM)
   // ===============================
 
   void loadClassList() {
     isLoading.value = true;
-    _classSubscription?.cancel();
 
+    // FIX: Perbaikan logic listener ganda jadi single listener
     _classSubscription = _db.onValue.listen(
       (event) {
+        // FIX CRASH ZOMBIE:
+        // Cek dulu apakah MemberModel masih ada di memori?
+        // Kalau user sudah logout, kode di bawah STOP dan gak bakal akses member lagi.
+        if (!Get.isRegistered<MemberModel>()) return;
+
         final data = event.snapshot.value;
         final List<ClassModel> temp = [];
 
         if (data is Map) {
           data.forEach((key, value) {
             if (value is Map) {
-              temp.add(
-                ClassModel.fromMap(
-                  key.toString(),
-                  Map<String, dynamic>.from(value),
-                ),
-              );
+              temp.add(ClassModel.fromMap(
+                key.toString(),
+                Map<String, dynamic>.from(value),
+              ));
             }
           });
         }
 
         allClasses.assignAll(temp);
+
+        // LOGIKA SELF-CLEANUP (Hapus ID kelas yang sudah dihapus instruktur)
+        try {
+           // Pastikan member masih valid sebelum akses propertinya
+           if (Get.isRegistered<MemberModel>()) {
+              List<String> activeClassIds = temp.map((e) => e.idClass).toList();
+              
+              for (String enrolledId in member.enrolledClassIds) {
+                if (!activeClassIds.contains(enrolledId)) {
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(member.uid)
+                      .update({
+                        'enrolledClassIds': FieldValue.arrayRemove([enrolledId]),
+                      });
+                  print("Sampah ID dibersihkan: $enrolledId");
+                }
+              }
+           }
+        } catch (e) {
+           print("Cleanup error (safe to ignore): $e");
+        }
+
         isLoading.value = false;
       },
       onError: (error) {
         isLoading.value = false;
-        Get.snackbar('Error', 'Gagal mengambil data kelas');
+        // Cek dialog open biar gak numpuk snackbar
+        if (!Get.isSnackbarOpen) {
+           Get.snackbar('Error', 'Gagal mengambil data kelas');
+        }
       },
     );
   }
 
   // ===============================
-  // JOIN / AMBIL KELAS
-  // PARTICIPANT MASUK KE CLASS
+  // JOIN KELAS
   // ===============================
 
   Future<void> joinClass(ClassModel classData) async {
@@ -94,42 +118,46 @@ class UserMenuController extends GetxController {
           .child('participants')
           .child(memberId);
 
-      // 🔎 Cek apakah sudah join
       final snapshot = await participantRef.get();
       if (snapshot.exists) {
-        Get.snackbar(
-          "Info",
-          "Anda sudah mengikuti kelas ini",
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        Get.snackbar("Info", "Anda sudah mengikuti kelas ini");
         return;
       }
 
-      // 🔥 SIMPAN PARTICIPANT + NAMA
+      // 1. Simpan ke RTDB
       await participantRef.set({
         'memberId': memberId,
-        'memberName': memberName, // ✅ DISIMPAN
+        'memberName': memberName,
         'joinedAt': DateTime.now().toIso8601String(),
         'paymentStatus': 'Unpaid',
       });
 
-      // 🔄 Update lokal
-      member.addEnrolledClass(classData.idClass);
+      // 2. Update Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(memberId)
+          .update({
+            'enrolledClassIds': FieldValue.arrayUnion([classData.idClass]),
+          });
+
+      // 3. Update UI Local
+      member.enrollClass(classData.idClass);
       allClasses.refresh();
 
       Get.snackbar(
         "Berhasil",
         "Anda berhasil mengikuti kelas ${classData.title}",
-        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
       );
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Gagal mengambil kelas",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar("Error", "Gagal mengikuti kelas");
     }
   }
+
+  // ===============================
+  // BAYAR / MARK PAID
+  // ===============================
 
   Future<void> markAsPaid(ClassModel classData) async {
     try {
@@ -140,44 +168,39 @@ class UserMenuController extends GetxController {
           .child(member.uid)
           .update({'paymentStatus': 'Paid'});
 
-      // refresh UI
       allClasses.refresh();
 
-      Get.snackbar(
-        "Pembayaran",
-        "Status pembayaran berhasil diperbarui",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar("Pembayaran", "Status pembayaran diperbarui");
     } catch (e) {
       Get.snackbar("Error", "Gagal update status pembayaran");
     }
   }
 
-  // ===============================
-  // DETAIL KELAS
-  // ===============================
-
   void onClassClicked(String idClass) {
-    // Get.toNamed('/classDetail', arguments: idClass);
+    // Navigasi detail jika diperlukan
   }
 
   // ===============================
-  // LOGOUT
+  // LOGOUT (FIXED)
   // ===============================
 
   void logoutClicked() {
     Get.defaultDialog(
       title: "Logout",
-      middleText: "Ingin keluar dari akun member?",
+      middleText: "Apakah Anda yakin ingin keluar?",
       textConfirm: "Ya",
       textCancel: "Batal",
       confirmTextColor: Colors.white,
       buttonColor: Colors.pinkAccent,
       onConfirm: () async {
+        // FIX: Matikan stream dulu sebelum logout agar tidak terjadi memory leak/crash
+        _classSubscription?.cancel();
+        
         try {
-          await member.Logout();
+          await member.Logout(); // Proses logout firebase auth
 
-          Get.delete<MemberModel>(force: true);
+          // Hapus semua controller dari memori
+          Get.deleteAll(); 
           Get.offAllNamed('/login');
         } catch (e) {
           Get.snackbar("Error", "Gagal logout: $e");
@@ -192,6 +215,7 @@ class UserMenuController extends GetxController {
 
   @override
   void onClose() {
+    // FIX: Pastikan stream mati saat controller dibuang
     _classSubscription?.cancel();
     super.onClose();
   }

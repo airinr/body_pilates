@@ -26,16 +26,13 @@ class UserMenuView extends GetView<UserMenuController> {
           title: const Text("Menu Member"),
           backgroundColor: Colors.pinkAccent,
           actions: [
-            // 🔔 TOMBOL NOTIFIKASI BARU
             IconButton(
               icon: const Icon(Icons.notifications),
               onPressed: () {
-                // Navigasi ke halaman Notifikasi
                 onNotificationClicked();
               },
             ),
 
-            // Tombol Logout di pojok kanan atas
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: onLogoutClicked,

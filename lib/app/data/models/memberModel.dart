@@ -14,7 +14,7 @@ class MemberModel extends UserModel {
        super(
          uid: uid,
          email: email,
-         fullName: name, // disimpan ke fullName milik UserModel
+         fullName: name,
          username: username,
          createdAt: createdAt,
        );
@@ -23,7 +23,7 @@ class MemberModel extends UserModel {
     return enrolledClassIds.contains(idClass);
   }
 
-  void addEnrolledClass(String idClass) {
+  void enrollClass(String idClass) {
     if (!enrolledClassIds.contains(idClass)) {
       enrolledClassIds.add(idClass);
     }
@@ -46,7 +46,7 @@ class MemberModel extends UserModel {
     return MemberModel(
       uid: uid,
       email: data['email'] ?? '',
-      name: data['name'] ?? '', // ✅ FIX UTAMA
+      name: data['name'] ?? '', 
       username: data['username'] ?? '',
       createdAt: createdAt,
       enrolledClassIds: List<String>.from(data['enrolledClassIds'] ?? []),

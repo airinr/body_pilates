@@ -5,11 +5,17 @@ import '../../controller/instructor/InstructorMenuController.dart';
 class InstructorMenuView extends GetView<InstructorMenuController> {
   const InstructorMenuView({super.key});
 
+  // Method
   void onLogoutClicked() {
     // Panggil logic di controller
     controller.logout();
   }
 
+  void onBroadcastClicked(idClass, className) {
+    controller.showBroadcastDialog(idClass, className);
+  }
+
+  // Tampilan
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,9 +84,15 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
                       onPressed: () {
                         Get.toNamed(
                           '/generateQR',
-                          arguments: item, // kirim data kelas
+                          arguments: item, 
                         );
-                      },
+                      }, 
+                    ),
+
+                    // 🔹 Button broadcast
+                    IconButton(
+                      icon: Icon(Icons.campaign),
+                      onPressed: () => onBroadcastClicked(item.idClass, item.title),
                     ),
 
                     // 🔹 Button Detail

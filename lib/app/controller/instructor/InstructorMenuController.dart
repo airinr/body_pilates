@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../data/models/classModel.dart';
 import '../../data/models/instructorModel.dart';
-
 
 class InstructorMenuController extends GetxController {
   final DatabaseReference _db = FirebaseDatabase.instance.ref('classes');
@@ -68,15 +67,15 @@ class InstructorMenuController extends GetxController {
         try {
           // 2. Panggil method Logout() punya parent (UserModel) lewat object child (Instructor)
           // Ini sah banget di OOP
-          await instructor.Logout(); 
-          
+          await instructor.Logout();
+
           // 3. PENTING: Hapus data instructor dari memori GetX
           // Karena pas login kita set 'permanent: true', kita wajib hapus manual pas logout
           // Biar kalau login pakai akun lain datanya gak nyangkut.
-          Get.delete<InstructorModel>(force: true); 
+          Get.delete<InstructorModel>(force: true);
 
           // 4. Balik ke halaman login
-          Get.offAllNamed('/login'); 
+          Get.offAllNamed('/login');
         } catch (e) {
           Get.snackbar("Error", "Gagal logout: $e");
         }
@@ -101,6 +100,93 @@ class InstructorMenuController extends GetxController {
   //     Get.snackbar('Error', 'Gagal menambah kelas');
   //   }
   // }
+  void showBroadcastDialog(String idClass, String className) {
+    // 1. Siapkan controller buat nangkep inputan
+    final titleController = TextEditingController();
+    final messageController = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        title: Text('Kirim Pesan ke "$className"'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: 'Judul Pengumuman',
+                hintText: 'Contoh: Perubahan Jam Kelas',
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            TextField(
+              controller: messageController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Isi Pesan',
+                hintText: 'Tulis pesan lengkap di sini...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
+
+          ElevatedButton(
+            onPressed: () {
+              // 1. Validasi di sini sebelum lanjut
+              if (titleController.text.trim().isEmpty ||
+                  messageController.text.trim().isEmpty) {
+                Get.snackbar(
+                  'Peringatan',
+                  'Judul dan Pesan tidak boleh kosong!',
+                  backgroundColor: Colors.orange,
+                  colorText: Colors.white,
+                );
+                return; // Berhenti di sini, jangan lanjut ke bawah
+              }
+
+              // 2. Kalau valid, baru kirim
+              sendBroadcast(
+                idClass,
+                titleController.text,
+                messageController.text,
+              );
+
+              // 3. Tutup dialog
+              Get.back();
+
+              // 4. Munculkan snackbar sukses (Gunakan $ untuk variabel)
+              Get.snackbar(
+                'Sukses',
+                'Pesan telah terkirim ke kelas $className', // Gunakan $ bukan {}
+                backgroundColor: Colors.green, // Sebaiknya hijau untuk sukses
+                colorText: Colors.white,
+              );
+            },
+            child: const Text('Kirim'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void sendBroadcast(String idClass, String title, String message) {
+    FirebaseDatabase.instance
+        .ref('notifications')
+        .push()
+        .set({
+          'classId': idClass, 
+          'title': title, 
+          'message': message, 
+          'timestamp': DateTime.now().millisecondsSinceEpoch, 
+        })
+        .catchError((error) {
+          Get.snackbar("Error Database", "Gagal simpan: $error");
+        });
+  }
 
   void deleteClass(String idClass) async {
     try {
