@@ -186,6 +186,10 @@ class UserMenuController extends GetxController {
     );
   }
 
+  void notificationClicked() {
+    Get.toNamed('/notification');
+  }
+
   @override
   void onClose() {
     _classSubscription?.cancel();

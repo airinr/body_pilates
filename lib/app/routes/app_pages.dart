@@ -14,6 +14,9 @@ import 'package:get/get.dart';
 import '../bindings/member/UserMenuBinding.dart';
 import '../modules/member/UserMenuView.dart';
 import '../controller/member/UserMenuController.dart';
+import '../bindings/member/NotificationBinding.dart';
+import '../modules/member/NotificationView.dart';
+import '../controller/member/NotificationController.dart';
 
 import '../modules/home/loginPage.dart';
 import '../bindings/loginBindings.dart';
@@ -55,6 +58,11 @@ class AppPages {
       name: Routes.userMenu,
       page: () => UserMenuView(),
       binding: UserMenuBinding(),
+    ),
+    GetPage(
+      name: Routes.notification,
+      page: () => NotificationView(),
+      binding: Notificationbinding(),
     ),
   ];
 }
