@@ -9,4 +9,5 @@ abstract class Routes {
   // Rute untuk member
   static const userMenu = '/userMenu';
   static const notification = '/notification';
+  static const classBefore = '/class-before';
 }

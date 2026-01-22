@@ -8,7 +8,9 @@ import 'package:body_pilates/app/modules/instructor/AddClassView.dart';
 import 'package:body_pilates/app/modules/instructor/GenerateQRView.dart';
 import 'package:body_pilates/app/modules/instructor/InstructorMenuView.dart';
 import 'package:body_pilates/app/modules/instructor/ManageClassView.dart';
+import 'package:body_pilates/app/modules/member/ClassBeforeView.dart';
 import 'package:get/get.dart';
+import 'package:body_pilates/app/bindings/member/ClassBeforeBinding.dart';
 
 // Package member
 import '../bindings/member/UserMenuBinding.dart';
@@ -61,6 +63,11 @@ class AppPages {
       name: Routes.notification,
       page: () => NotificationView(),
       binding: Notificationbinding(),
+    ),
+    GetPage(
+      name: Routes.classBefore,
+      page: () => ClassBeforeView(),
+      binding: ClassBeforebinding(),
     ),
   ];
 }
