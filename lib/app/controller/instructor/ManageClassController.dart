@@ -103,18 +103,58 @@ class ManageClassController extends GetxController {
   // DELETE KELAS
   // ===============================
   void confirmDelete() async {
-    try {
-      await _db.child(data.idClass).remove();
+    // 1. Tutup Dialog Konfirmasi dulu
+    Get.back();
 
-      Get.back();
-      Get.snackbar(
-        'Sukses',
-        'Kelas berhasil dihapus',
-        backgroundColor: Colors.redAccent,
-        colorText: Colors.white,
-      );
+    // 2. TAMPILKAN LOADING (PENTING! Biar user gak bisa ngapa-ngapain & UI gak freeze)
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    try {
+      String classId = data.idClass; // Pastikan data masih ada
+      final notifRef = FirebaseDatabase.instance.ref('notifications');
+
+      // --- MULAI PROSES BERAT ---
+
+      // A. Ambil semua notifikasi
+      final notifSnapshot = await notifRef.get();
+
+      if (notifSnapshot.exists && notifSnapshot.value is Map) {
+        Map<dynamic, dynamic> notifs =
+            notifSnapshot.value as Map<dynamic, dynamic>;
+
+        // B. KUMPULKAN TASK PENGHAPUSAN (JANGAN DIAWAIT SATU-SATU)
+        List<Future> deleteTasks = [];
+
+        notifs.forEach((key, value) {
+          if (value is Map && value['classId'] == classId) {
+            // Masukkan perintah hapus ke dalam list antrian (belum dieksekusi/ditunggu)
+            deleteTasks.add(notifRef.child(key.toString()).remove());
+          }
+        });
+
+        // C. EKSEKUSI SEMUA PENGHAPUSAN SEKALIGUS (PARALEL)
+        // Ini jauh lebih cepat daripada looping await satu-satu
+        await Future.wait(deleteTasks);
+      }
+
+      // D. HAPUS KELAS UTAMA
+      await _db.child(classId).remove();
+
     } catch (e) {
-      Get.snackbar('Error', 'Gagal menghapus kelas');
+      print("Error saat menghapus: $e");
+    } finally {
+      // 3. TUTUP LOADING
+      if (Get.isDialogOpen ?? false) {
+        Get.back(); // Tutup loading spinner
+      }
+
+      // 4. BARU KELUAR DARI HALAMAN MANAGE CLASS
+      Get.back(); // Kembali ke menu sebelumnya
+
+      Get.snackbar('Sukses', 'Kelas berhasil dihapus');
     }
   }
 

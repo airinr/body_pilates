@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; 
 import '../../controller/member/NotificationController.dart';
 
 class NotificationView extends StatelessWidget {
@@ -37,7 +36,6 @@ class NotificationView extends StatelessWidget {
           itemBuilder: (context, index) {
             final item = controller.notificationList[index];
             
-            // Format Tanggal (Contoh: 20 Jan 14:30)
             final date = DateTime.fromMillisecondsSinceEpoch(item.timestamp);
             final dateString = "${date.day}/${date.month} ${date.hour}:${date.minute.toString().padLeft(2, '0')}";
 

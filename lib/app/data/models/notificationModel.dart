@@ -27,7 +27,7 @@ class NotificationModel {
     return NotificationModel(
       id: id,
       classId: map['classId'] ?? '',
-      title: map['title'] ?? '',
+      title: map['title'] ?? 'Tidak Berjudul',
       message: map['message'] ?? '',
       timestamp: map['timestamp'] ?? 0,
     );

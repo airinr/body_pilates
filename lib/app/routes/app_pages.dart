@@ -13,10 +13,8 @@ import 'package:get/get.dart';
 // Package member
 import '../bindings/member/UserMenuBinding.dart';
 import '../modules/member/UserMenuView.dart';
-import '../controller/member/UserMenuController.dart';
 import '../bindings/member/NotificationBinding.dart';
 import '../modules/member/NotificationView.dart';
-import '../controller/member/NotificationController.dart';
 
 import '../modules/home/loginPage.dart';
 import '../bindings/loginBindings.dart';
