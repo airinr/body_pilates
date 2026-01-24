@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/member/NotificationController.dart';
 
-class NotificationView extends StatelessWidget {
+class NotificationView extends GetView<NotificationController> {
+  const NotificationView({super.key});
+
   @override
   Widget build(BuildContext context) {
-    // Inject controller saat halaman dibuka
-    final controller = Get.put(NotificationController());
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifikasi"),

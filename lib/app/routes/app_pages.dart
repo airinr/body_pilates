@@ -17,6 +17,8 @@ import '../bindings/member/UserMenuBinding.dart';
 import '../modules/member/UserMenuView.dart';
 import '../bindings/member/NotificationBinding.dart';
 import '../modules/member/NotificationView.dart';
+import '../bindings/member/ClassAfterBinding.dart';
+import '../modules/member/ClassAfterView.dart';
 
 import '../modules/home/loginPage.dart';
 import '../bindings/loginBindings.dart';
@@ -62,12 +64,17 @@ class AppPages {
     GetPage(
       name: Routes.notification,
       page: () => NotificationView(),
-      binding: Notificationbinding(),
+      binding: NotificationBinding(),
     ),
     GetPage(
       name: Routes.classBefore,
       page: () => ClassBeforeView(),
-      binding: ClassBeforebinding(),
+      binding: ClassBeforeBinding(),
     ),
+    GetPage(
+      name: Routes.classAfter,
+      page: () => ClassAfterView(),
+      binding: ClassAfterBinding(),
+    )
   ];
 }

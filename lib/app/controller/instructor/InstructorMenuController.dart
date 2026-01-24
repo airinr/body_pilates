@@ -83,23 +83,6 @@ class InstructorMenuController extends GetxController {
     );
   }
 
-  // void addClass({
-  //   required String title,
-  //   required String date,
-  //   required String time,
-  //   required int price,
-  // }) async {
-  //   try {
-  //     await _db.push().set({
-  //       'title': title,
-  //       'date': date,
-  //       'time': time,
-  //       'price': price,
-  //     });
-  //   } catch (e) {
-  //     Get.snackbar('Error', 'Gagal menambah kelas');
-  //   }
-  // }
   void showBroadcastDialog(String idClass, String className) {
     // 1. Siapkan controller buat nangkep inputan
     final titleController = TextEditingController();
