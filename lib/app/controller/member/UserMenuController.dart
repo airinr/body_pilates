@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../data/models/classModel.dart';
@@ -55,11 +56,25 @@ class UserMenuController extends GetxController {
     Get.toNamed('/class-detail', arguments: kelas);
   }
 
-  void logoutClicked() async {
-    _classSubscription?.cancel();
-    await member.Logout();
-    Get.deleteAll();
-    Get.offAllNamed('/login');
+  void logoutClicked() {
+    Get.defaultDialog(
+      title: "Logout",
+      middleText: "Apakah Anda yakin ingin keluar?",
+      textConfirm: "Ya, Keluar",
+      textCancel: "Batal",
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () async {
+        try {
+          _classSubscription?.cancel();
+          await member.Logout();
+          Get.deleteAll(force: true);
+          Get.offAllNamed('/login');
+        } catch (e) {
+          Get.snackbar("Error", "Gagal logout: $e");
+        }
+      },
+    );
   }
 
   void notificationClicked() {

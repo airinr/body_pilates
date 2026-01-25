@@ -155,9 +155,6 @@ class UserMenuView extends GetView<UserMenuController> {
     );
   }
 
-  // =============================
-  // HELPER
-  // =============================
   bool _isPaid(ClassModel item) {
     final participant = item.participants[controller.member.uid];
     return participant != null && participant['paymentStatus'] == 'Paid';

@@ -65,13 +65,8 @@ class InstructorMenuController extends GetxController {
       buttonColor: Colors.red,
       onConfirm: () async {
         try {
-          // 2. Panggil method Logout() punya parent (UserModel) lewat object child (Instructor)
-          // Ini sah banget di OOP
           await instructor.Logout();
 
-          // 3. PENTING: Hapus data instructor dari memori GetX
-          // Karena pas login kita set 'permanent: true', kita wajib hapus manual pas logout
-          // Biar kalau login pakai akun lain datanya gak nyangkut.
           Get.delete<InstructorModel>(force: true);
 
           // 4. Balik ke halaman login
