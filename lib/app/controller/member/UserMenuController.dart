@@ -30,7 +30,7 @@ class UserMenuController extends GetxController {
   void loadClassList() {
     isLoading.value = true;
 
-    _classSubscription = _db.onValue.listen((event) {
+    _db.onValue.listen((event) {
       final data = event.snapshot.value;
       final List<ClassModel> temp = [];
 
@@ -39,7 +39,7 @@ class UserMenuController extends GetxController {
           temp.add(
             ClassModel.fromMap(
               key.toString(),
-              Map<String, dynamic>.from(value),
+              value as Map<dynamic, dynamic>, // Casting aman ke dynamic map
             ),
           );
         });

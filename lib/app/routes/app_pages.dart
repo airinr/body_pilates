@@ -19,6 +19,8 @@ import '../bindings/member/NotificationBinding.dart';
 import '../modules/member/NotificationView.dart';
 import '../bindings/member/ClassAfterBinding.dart';
 import '../modules/member/ClassAfterView.dart';
+import '../bindings/member/ScanQRBinding.dart';
+import '../modules/member/ScanQRView.dart';
 
 import '../modules/home/loginPage.dart';
 import '../bindings/loginBindings.dart';
@@ -75,6 +77,11 @@ class AppPages {
       name: Routes.classAfter,
       page: () => ClassAfterView(),
       binding: ClassAfterBinding(),
+    ),
+    GetPage(
+      name: Routes.scanQR,
+      page: () => ScanQRView(),
+      binding: ScanQRBinding(),
     )
   ];
 }
