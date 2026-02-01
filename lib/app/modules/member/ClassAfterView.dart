@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; // Pastikan import intl untuk format tanggal cantik (opsional, jika ada)
 import '../../controller/member/ClassAfterController.dart';
 import '../../data/models/classModel.dart';
 import '../../data/models/memberModel.dart';

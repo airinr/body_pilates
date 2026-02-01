@@ -21,6 +21,8 @@ import '../bindings/member/ClassAfterBinding.dart';
 import '../modules/member/ClassAfterView.dart';
 import '../bindings/member/ScanQRBinding.dart';
 import '../modules/member/ScanQRView.dart';
+import '../bindings/member/PaymentBinding.dart';
+import '../modules/member/PaymentView.dart';
 
 import '../modules/home/loginPage.dart';
 import '../bindings/loginBindings.dart';
@@ -82,6 +84,11 @@ class AppPages {
       name: Routes.scanQR,
       page: () => ScanQRView(),
       binding: ScanQRBinding(),
+    ),
+    GetPage(
+      name: Routes.payment,
+      page: () => PaymentView(),
+      binding: PaymentBinding(),
     )
   ];
 }

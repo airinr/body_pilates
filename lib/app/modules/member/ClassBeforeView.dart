@@ -10,7 +10,7 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPink, // Background biru muda
+      backgroundColor: AppColors.backgroundPink,
       appBar: AppBar(
         title: const Text(
           "Detail Booking",
@@ -36,236 +36,172 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
 
         final ClassModel? kelas = controller.classDetail.value;
 
-        // ⛔ SAFETY CHECK
         if (kelas == null) {
           return const Center(child: Text("Data kelas tidak ditemukan"));
         }
 
-        return Column(
-          children: [
-            // SCROLLABLE CONTENT
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    // KARTU UTAMA (Preview Kelas)
-                    _buildMainCard(kelas),
-
-                    const SizedBox(height: 20),
-
-                    // KARTU BENEFIT / INFO TAMBAHAN (Opsional)
-                    _buildInfoNote(),
-                  ],
-                ),
-              ),
-            ),
-
-            // BOTTOM ACTION BAR (Tombol Bayar)
-            _buildBottomPaymentBar(kelas),
-          ],
-        );
+        // Panggil Method Tampilan
+        return showClassDetailBefore(kelas);
       }),
     );
   }
 
-  // =============================
-  // WIDGETS KOMPONEN
-  // =============================
+  // ==========================================
+  // METHOD SESUAI CLASS DIAGRAM
+  // ==========================================
 
-  Widget _buildMainCard(ClassModel kelas) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryPink.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // HEADER IMAGE / ICON
-          Container(
-            height: 120,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.softPink.withOpacity(0.3),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.fitness_center_rounded,
-                size: 60,
-                color: AppColors.primaryPink.withOpacity(0.5),
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // JUDUL KELAS
-                Text(
-                  kelas.title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black87,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Segera amankan slotmu sekarang!",
-                  style: TextStyle(color: Colors.grey[500], fontSize: 14),
-                ),
-
-                const SizedBox(height: 24),
-                const Divider(height: 1),
-                const SizedBox(height: 24),
-
-                // GRID INFO (Tanggal & Waktu)
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildDetailItem(
-                        Icons.calendar_month_rounded,
-                        "Tanggal",
-                        kelas.date,
-                      ),
-                    ),
-                    Container(height: 40, width: 1, color: Colors.grey[200]),
-                    Expanded(
-                      child: _buildDetailItem(
-                        Icons.access_time_filled_rounded,
-                        "Waktu",
-                        kelas.time,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailItem(IconData icon, String label, String value) {
+  Widget showClassDetailBefore(ClassModel kelas) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.primaryPink, size: 28),
-        const SizedBox(height: 8),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoNote() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.info_outline_rounded, color: Colors.grey[400]),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Text(
-              "Pembayaran akan diverifikasi otomatis oleh sistem.",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomPaymentBar(ClassModel kelas) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ROW TOTAL HARGA
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
               children: [
-                const Text(
-                  "Total Pembayaran",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey,
+                // --- CARD INFO KELAS ---
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryPink.withOpacity(0.08),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  "Rp ${kelas.price}",
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.primaryPink, // Warna Biru Utama
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header Icon
+                      Container(
+                        height: 120,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: AppColors.softPink.withOpacity(0.3),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.fitness_center_rounded,
+                            size: 60,
+                            color: AppColors.primaryPink.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                      
+                      // Content Text
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              kelas.title,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Segera amankan slotmu sekarang sebelum kehabisan!",
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            const Divider(height: 1),
+                            const SizedBox(height: 24),
+                            
+                            // Info Row
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    Icons.calendar_month_rounded,
+                                    "Tanggal",
+                                    kelas.date,
+                                  ),
+                                ),
+                                Container(
+                                  height: 40,
+                                  width: 1,
+                                  color: Colors.grey[200],
+                                ),
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    Icons.access_time_filled_rounded,
+                                    "Waktu",
+                                    kelas.time,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                             Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    Icons.monetization_on_rounded,
+                                    "Harga Kelas",
+                                    "Rp ${kelas.price}",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+          ),
+        ),
 
-            // TOMBOL BAYAR
-            SizedBox(
+        // --- BOTTOM BAR ---
+        Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPink, // Warna Biru Utama
+                  backgroundColor: AppColors.primaryPink,
                   elevation: 5,
                   shadowColor: AppColors.primaryPink.withOpacity(0.4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: () =>
-                    controller.payClass(controller.userId, controller.idClass),
+                // Panggil onPayClick (Navigasi Langsung)
+                onPressed: () => onPayClick(controller.userId, kelas.idClass),
+                
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Bayar & Gabung Kelas",
+                      "Lanjut ke Pembayaran",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -282,9 +218,50 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
                 ),
               ),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
+    );
+  }
+
+  // 2. Method Navigasi Langsung (Tanpa Controller)
+  void onPayClick(String idUser, String idClass) {
+    // Ambil detail kelas dari controller untuk dikirim ke Payment
+    final kelas = controller.classDetail.value;
+    
+    if (kelas != null) {
+      // 🔥 LANGSUNG NAVIGASI DI SINI (VIEW LOGIC)
+      Get.toNamed(
+        '/payment',
+        arguments: {
+          'idClass': idClass,
+          'className': kelas.title,
+          'price': kelas.price,
+          'idUser': idUser,
+        },
+      );
+    }
+  }
+
+  Widget _buildDetailItem(IconData icon, String label, String value) {
+    return Column(
+      children: [
+        Icon(icon, color: AppColors.primaryPink, size: 28),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }
