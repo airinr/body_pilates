@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Import Routes
 import '../routes/app_routes.dart';
 
-// Import semua Model
 import '../data/models/memberModel.dart';
 import '../data/models/instructorModel.dart'; // Jangan lupa import ini!
 
@@ -24,17 +22,14 @@ class LoginController extends GetxController {
     isPasswordHidden.value = !isPasswordHidden.value;
   }
 
-  // 🔹 PINDAH KE REGISTER
   void goToRegister() {
     Get.toNamed(Routes.register);
   }
 
-  // 🔹 LOGIN FIREBASE
   Future<void> auth() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    // Validasi Input Kosong
     if (email.isEmpty || password.isEmpty) {
       Get.snackbar(
         "Error",
@@ -49,13 +44,11 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
 
-      // 1️⃣ Login ke Firebase Auth
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // 2️⃣ Ambil data detail user dari Firestore
       DocumentSnapshot userDoc = await _firestore
           .collection('users')
           .doc(userCredential.user!.uid)
@@ -68,14 +61,12 @@ class LoginController extends GetxController {
         return;
       }
 
-      // Ambil data sebagai Map
       final userData = userDoc.data() as Map<String, dynamic>;
       final String uid = userCredential.user!.uid;
       final String role = userData['role'] ?? '';
 
-      // Helper untuk handle Timestamp agar tidak error "subtype of DateTime"
       dynamic createdAtRaw = userData['createdAt'];
-      DateTime validCreatedAt = DateTime.now(); // Default fallback
+      DateTime validCreatedAt = DateTime.now(); 
       if (createdAtRaw is Timestamp) {
         validCreatedAt = createdAtRaw.toDate();
       } else if (createdAtRaw is String) {
@@ -84,35 +75,24 @@ class LoginController extends GetxController {
 
       userData['createdAt'] = validCreatedAt;
 
-      // 3️⃣ LOGIC PEMISAHAN MODEL BERDASARKAN ROLE (POLYMORPHISM)
       if (role == 'instructor') {
-        // --- LOGIC INSTRUCTOR ---
-        // Instantiate InstructorModel sesuai Diagram
         final instructor = InstructorModel.fromFirestore(userData, uid);
 
-        // Simpan ke GetX sebagai InstructorModel
         Get.put<InstructorModel>(instructor, permanent: true);
 
-        // Feedback & Navigasi
         Get.snackbar("Success", "Welcome Coach ${userData['name']}");
         Get.offAllNamed(Routes.instructorMenu);
 
       } else if (role == 'member') {
-        // --- LOGIC MEMBER ---
-        // Instantiate MemberModel pakai Factory
         final member = MemberModel.fromFirestore(userData, uid);
 
-        // Simpan ke GetX sebagai MemberModel
         Get.put<MemberModel>(member, permanent: true);
 
-        // Feedback & Navigasi
         Get.snackbar("Success", "Welcome Member ${userData['name']}");
         Get.offAllNamed(Routes.userMenu);
 
       } else {
-        // Role tidak dikenali
         Get.snackbar("Error", "Role user tidak valid: $role");
-        // Opsional: Logout paksa jika role aneh
         await _auth.signOut();
       }
 

@@ -15,7 +15,6 @@ class UserModel {
     required this.createdAt,
   });
 
-  // Convert ke Map (untuk Firestore)
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -26,12 +25,10 @@ class UserModel {
     };
   }
 
-  // Method logout
   Future<void> Logout() async {
     await FirebaseAuth.instance.signOut();
   }
 
-  // Convert dari Firestore ke Object
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'],

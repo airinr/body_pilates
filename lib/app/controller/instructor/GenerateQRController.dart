@@ -9,7 +9,7 @@ class GenerateQRController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    classData = Get.arguments; // data kelas dari InstructorMenu
+    classData = Get.arguments; 
 
     generateQR();
   }

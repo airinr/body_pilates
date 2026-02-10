@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
 import '../../controller/instructor/GenerateQRController.dart';
+import '../../core/theme/app_colors.dart';
 
 class GenerateQRView extends GetView<GenerateQRController> {
   const GenerateQRView({super.key});
@@ -10,48 +10,174 @@ class GenerateQRView extends GetView<GenerateQRController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors
+          .primaryPink, 
       appBar: AppBar(
-        title: const Text("QR Check-in Kelas"),
-        backgroundColor: Colors.pinkAccent,
+        title: const Text(
+          "QR Check-in",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: AppColors.primaryPink,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.close_rounded,
+          ),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: Center(
-        child: Obx(
-          () => controller.qrData.isEmpty
-              ? const CircularProgressIndicator()
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // 🔹 Info kelas
-                    Text(
-                      controller.classData.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Obx(() {
+            if (controller.qrData.isEmpty) {
+              return const CircularProgressIndicator(color: Colors.white);
+            }
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 40,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundPink,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.qr_code_2_rounded,
+                          size: 32,
+                          color: AppColors.primaryPink,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        controller.classData.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.darkPink,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.calendar_today_rounded,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              "${controller.classData.date} • ${controller.classData.time}",
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey.shade200,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: QrImageView(
+                          data: controller.qrData.value,
+                          version: QrVersions.auto,
+                          size: 220,
+                          backgroundColor: Colors.white,
+                          eyeStyle: const QrEyeStyle(
+                            eyeShape: QrEyeShape.square,
+                            color: Colors.black,
+                          ),
+                          dataModuleStyle: const QrDataModuleStyle(
+                            dataModuleShape: QrDataModuleShape.square,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      Text(
+                        "Tunjukkan QR ini kepada Member",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Scan menggunakan menu kamera di aplikasi member",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.light_mode_outlined,
+                      color: Colors.white70,
+                      size: 18,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(width: 8),
                     Text(
-                      "${controller.classData.date} • ${controller.classData.time}",
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // 🔹 QR Code
-                    QrImageView(
-                      data: controller.qrData.value,
-                      size: 250,
-                      backgroundColor: Colors.white,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    const Text(
-                      "Tunjukkan QR ini kepada member\nuntuk check-in",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
+                      "Pastikan kecerahan layar hp anda cukup",
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
                 ),
+              ],
+            );
+          }),
         ),
       ),
     );

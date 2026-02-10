@@ -16,7 +16,6 @@ class AddClassController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // default tanggal hari ini
     dateC.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 
@@ -38,44 +37,37 @@ class AddClassController extends GetxController {
   }
 
   Future<void> saveData() async {
-    // 1. Bikin ref (Logic lama lo)
     final newClassRef = _db.push();
 
     if (!validateInput()) return;
 
-    // 2. TAMPILKAN LOADING (Pengganti isLoading.value)
     Get.dialog(
       const Center(child: CircularProgressIndicator()),
       barrierDismissible: false,
     );
 
     try {
-      // 3. Simpan Data (Masih pakai logic lama lo)
       await newClassRef.set({
         'idClass': newClassRef
-            .key, // <--- HATI-HATI DI SINI (Baca penjelasan di bawah)
+            .key, 
         'title': titleC.text,
         'date': dateC.text,
         'time': timeC.text,
         'price': int.parse(priceC.text.replaceAll('.', '')),
       });
 
-      // 4. Tutup Loading dulu
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
 
-      // 5. Tutup Halaman Form
       Get.back();
       Get.snackbar('Sukses', 'Kelas berhasil ditambahkan');
     } catch (e) {
-      // Kalau error, tutup loading dulu
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
       Get.snackbar('Error', 'Gagal menambahkan kelas');
     }
-    // Gak perlu finally isLoading = false karena sudah dihandle dialog
   }
 
   @override

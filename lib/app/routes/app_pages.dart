@@ -8,13 +8,21 @@ import 'package:body_pilates/app/modules/instructor/AddClassView.dart';
 import 'package:body_pilates/app/modules/instructor/GenerateQRView.dart';
 import 'package:body_pilates/app/modules/instructor/InstructorMenuView.dart';
 import 'package:body_pilates/app/modules/instructor/ManageClassView.dart';
+import 'package:body_pilates/app/modules/member/ClassBeforeView.dart';
 import 'package:get/get.dart';
+import 'package:body_pilates/app/bindings/member/ClassBeforeBinding.dart';
 
 // Package member
 import '../bindings/member/UserMenuBinding.dart';
 import '../modules/member/UserMenuView.dart';
 import '../bindings/member/NotificationBinding.dart';
 import '../modules/member/NotificationView.dart';
+import '../bindings/member/ClassAfterBinding.dart';
+import '../modules/member/ClassAfterView.dart';
+import '../bindings/member/ScanQRBinding.dart';
+import '../modules/member/ScanQRView.dart';
+import '../bindings/member/PaymentBinding.dart';
+import '../modules/member/PaymentView.dart';
 
 import '../modules/home/loginPage.dart';
 import '../bindings/loginBindings.dart';
@@ -60,7 +68,27 @@ class AppPages {
     GetPage(
       name: Routes.notification,
       page: () => NotificationView(),
-      binding: Notificationbinding(),
+      binding: NotificationBinding(),
     ),
+    GetPage(
+      name: Routes.classBefore,
+      page: () => ClassBeforeView(),
+      binding: ClassBeforeBinding(),
+    ),
+    GetPage(
+      name: Routes.classAfter,
+      page: () => ClassAfterView(),
+      binding: ClassAfterBinding(),
+    ),
+    GetPage(
+      name: Routes.scanQR,
+      page: () => ScanQRView(),
+      binding: ScanQRBinding(),
+    ),
+    GetPage(
+      name: Routes.payment,
+      page: () => PaymentView(),
+      binding: PaymentBinding(),
+    )
   ];
 }

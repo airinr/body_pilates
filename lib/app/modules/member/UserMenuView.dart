@@ -1,333 +1,263 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// Import Controller dan Model
 import '../../controller/member/UserMenuController.dart';
 import '../../data/models/classModel.dart';
+import '../../core/theme/app_colors.dart';
 
 class UserMenuView extends GetView<UserMenuController> {
   const UserMenuView({super.key});
-
-  void onLogoutClicked() {
-    controller.logoutClicked();
-  }
-
-  void onNotificationClicked() {
-    // Navigasi ke halaman Notifikasi
-    controller.notificationClicked();
-  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.grey[50],
         appBar: AppBar(
-          title: const Text("Menu Member"),
-          backgroundColor: Colors.pinkAccent,
+          title: const Text(
+            "Menu Member",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          backgroundColor: AppColors.primaryPink,
+          elevation: 0,
+          foregroundColor: Colors.white,
           actions: [
             IconButton(
-              icon: const Icon(Icons.notifications),
-              onPressed: () {
-                onNotificationClicked();
-              },
+              icon: const Icon(Icons.notifications_outlined),
+              tooltip: "Notifikasi",
+              onPressed: controller.notificationClicked,
             ),
-
             IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: onLogoutClicked,
+              icon: const Icon(Icons.logout_rounded),
+              tooltip: "Keluar",
+              onPressed: controller.logoutClicked,
             ),
           ],
           bottom: const TabBar(
             indicatorColor: Colors.white,
+            indicatorWeight: 3,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white60,
             tabs: [
-              Tab(icon: Icon(Icons.search), text: "Cari Kelas"),
-              Tab(icon: Icon(Icons.check_circle_outline), text: "Kelas Saya"),
+              Tab(text: "Kelas Tersedia"),
+              Tab(text: "Kelas Saya"),
             ],
           ),
         ),
         body: TabBarView(
           children: [
-            Obx(
-              () => _buildClassList(
-                classes: controller.availableClasses,
-                isEnrolled: false,
-              ),
-            ),
-            Obx(
-              () => _buildClassList(
-                classes: controller.enrolledClasses,
-                isEnrolled: true,
-              ),
-            ),
+            _buildClassList(isEnrolledTab: false),
+            _buildClassList(isEnrolledTab: true),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildClassList({
-    required List<ClassModel> classes,
-    required bool isEnrolled,
-  }) {
-    if (classes.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isEnrolled ? Icons.event_busy : Icons.search_off,
-              size: 64,
-              color: Colors.grey[300],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              isEnrolled
-                  ? "Belum ada kelas yang diikuti"
-                  : "Tidak ada kelas tersedia",
-              style: TextStyle(color: Colors.grey[500], fontSize: 16),
-            ),
-          ],
-        ),
-      );
-    }
+  Widget _buildClassList({required bool isEnrolledTab}) {
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(color: AppColors.primaryPink),
+        );
+      }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(12),
-      itemCount: classes.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final item = classes[index];
-        final isPaid = _isPaid(item);
+      final List<ClassModel> listData = isEnrolledTab
+          ? controller.enrolledClasses
+          : controller.availableClasses;
 
-        return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 10,
-              horizontal: 16,
-            ),
-            leading: CircleAvatar(
-              backgroundColor: isEnrolled ? Colors.green[100] : Colors.pink[50],
-              child: Icon(
-                Icons.self_improvement,
-                color: isEnrolled ? Colors.green : Colors.pinkAccent,
+      if (listData.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isEnrolledTab ? Icons.event_busy : Icons.search_off,
+                size: 60,
+                color: Colors.grey[400],
               ),
-            ),
-            title: Text(
-              item.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 6),
-                _infoRow(Icons.calendar_today, "${item.date} • ${item.time}"),
-                const SizedBox(height: 4),
-                _infoRow(Icons.payments, "Rp ${item.price}"),
-                if (isEnrolled) const SizedBox(height: 6),
-                if (isEnrolled) _paymentStatusBadge(item),
-              ],
-            ),
-            trailing: isEnrolled
-                ? (isPaid
-                      ? const Icon(Icons.qr_code_scanner, color: Colors.green)
-                      : const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 18,
-                          color: Colors.grey,
-                        ))
-                : const Icon(Icons.add_circle_outline),
-            onTap: () {
-              if (!isEnrolled) {
-                _showJoinDialog(item);
-              } else if (!isPaid) {
-                _showPaymentDialog(item);
-              } else {
-                _showScanQRDialog(item);
-              }
-            },
+              const SizedBox(height: 16),
+              Text(
+                isEnrolledTab
+                    ? "Kamu belum mengambil kelas apapun"
+                    : "Tidak ada kelas baru tersedia",
+                style: TextStyle(color: Colors.grey[500]),
+              ),
+            ],
           ),
         );
-      },
-    );
-  }
+      }
 
-  // =============================
-  // STATUS & HELPER
-  // =============================
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: listData.length,
+        itemBuilder: (context, index) {
+          final kelas = listData[index];
+          bool isPaid = false;
+          if (isEnrolledTab) {
+            isPaid = _isPaid(kelas);
+          }
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => controller.onClassClicked(kelas),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColors.softPink.withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.fitness_center,
+                                    size: 16, color: AppColors.primaryPink),
+                                SizedBox(width: 4),
+                                Text(
+                                  "Pilates",
+                                  style: TextStyle(
+                                    color: AppColors.darkPink,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (isEnrolledTab) _paymentStatusBadge(isPaid),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        kelas.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today_rounded,
+                              size: 14, color: Colors.grey[600]),
+                          const SizedBox(width: 4),
+                          Text(kelas.date,
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 13)),
+                          const SizedBox(width: 16),
+                          Icon(Icons.access_time_rounded,
+                              size: 14, color: Colors.grey[600]),
+                          const SizedBox(width: 4),
+                          Text(kelas.time,
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 13)),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Rp ${kelas.price}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryPink,
+                            ),
+                          ),
+                          if (!isEnrolledTab)
+                            const Text(
+                              "Daftar Sekarang >",
+                              style: TextStyle(
+                                  color: AppColors.primaryPink,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
 
   bool _isPaid(ClassModel item) {
-    final participant = item.participants[controller.member.uid];
-    return participant != null && participant['paymentStatus'] == 'Paid';
+    try {
+      final participant = item.participants[controller.member.uid];
+      if (participant != null && participant is Map) {
+        return participant['paymentStatus'] == 'Paid';
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
-  Widget _infoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: Colors.grey),
-        const SizedBox(width: 6),
-        Text(text),
-      ],
-    );
-  }
-
-  Widget _paymentStatusBadge(ClassModel item) {
-    final isPaid = _isPaid(item);
-
-    return Row(
-      children: [
-        Icon(
-          isPaid ? Icons.check_circle : Icons.error_outline,
-          size: 14,
-          color: isPaid ? Colors.green : Colors.orange,
+  Widget _paymentStatusBadge(bool isPaid) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: isPaid
+            ? Colors.green.withOpacity(0.1)
+            : Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: isPaid
+              ? Colors.green.withOpacity(0.2)
+              : Colors.orange.withOpacity(0.2),
         ),
-        const SizedBox(width: 4),
-        Text(
-          isPaid ? "Paid" : "Belum bayar",
-          style: TextStyle(
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isPaid ? Icons.check_circle_rounded : Icons.pending_actions_rounded,
+            size: 12,
             color: isPaid ? Colors.green : Colors.orange,
-            fontWeight: FontWeight.w600,
           ),
-        ),
-      ],
-    );
-  }
-
-  // =============================
-  // DIALOG JOIN
-  // =============================
-
-  void _showJoinDialog(ClassModel item) {
-    Get.dialog(
-      AlertDialog(
-        title: Text(
-          item.title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _infoRow(Icons.calendar_today, "${item.date} • ${item.time}"),
-            const SizedBox(height: 8),
-            _infoRow(Icons.payments, "Rp ${item.price}"),
-            const Divider(height: 24),
-            const Text(
-              "Apakah anda akan mengikuti kelas ini?",
-              style: TextStyle(fontWeight: FontWeight.w600),
+          const SizedBox(width: 4),
+          Text(
+            isPaid ? "LUNAS" : "BELUM BAYAR",
+            style: TextStyle(
+              color: isPaid ? Colors.green : Colors.orange,
+              fontWeight: FontWeight.bold,
+              fontSize: 10,
             ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: Get.back, child: const Text("Tutup")),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.pinkAccent),
-            onPressed: () {
-              Get.back();
-              controller.joinClass(item);
-            },
-            child: const Text("Ya, Ikuti"),
           ),
         ],
       ),
     );
   }
-
-  // =============================
-  // DIALOG PAYMENT
-  // =============================
-
-  void _showPaymentDialog(ClassModel item) {
-    Get.dialog(
-      AlertDialog(
-        title: const Text(
-          "Pembayaran Kelas",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              item.title,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text("Total: Rp ${item.price}"),
-            const SizedBox(height: 16),
-            _buildDummyQRIS(),
-            const SizedBox(height: 16),
-            const Text(
-              "Silakan scan QRIS untuk melakukan pembayaran",
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: Get.back, child: const Text("Batal")),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            onPressed: () async {
-              Get.back();
-              await controller.markAsPaid(item);
-            },
-            child: const Text("Saya Sudah Bayar"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // =============================
-  // DIALOG SCAN QR
-  // =============================
-
-  void _showScanQRDialog(ClassModel item) {
-    Get.dialog(
-      AlertDialog(
-        title: const Text(
-          "Scan QR Check-in",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildDummyQRIS(),
-            const SizedBox(height: 12),
-            const Text(
-              "Tunjukkan QR ini ke instructor",
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [TextButton(onPressed: Get.back, child: const Text("Tutup"))],
-      ),
-    );
-  }
-}
-
-// =============================
-// QRIS / QR DUMMY
-// =============================
-Widget _buildDummyQRIS() {
-  return Container(
-    width: 220,
-    height: 220,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        Icon(Icons.qr_code, size: 120, color: Colors.black),
-        SizedBox(height: 8),
-        Text("QR DUMMY", style: TextStyle(fontWeight: FontWeight.bold)),
-      ],
-    ),
-  );
 }
