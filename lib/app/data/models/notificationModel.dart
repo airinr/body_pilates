@@ -1,10 +1,10 @@
 // file: data/models/notificationModel.dart
 class NotificationModel {
   final String id;
-  final String classId; // ID Kelas terkait
+  final String classId; 
   final String title;
   final String message;
-  final int timestamp; // Kita pakai int (epoch) biar gampang sorting
+  final int timestamp; 
 
   NotificationModel({
     required this.id,

@@ -9,14 +9,14 @@ class NotificationView extends GetView<NotificationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPink, // Background Biru Muda
+      backgroundColor: AppColors.backgroundPink,
       appBar: AppBar(
         title: const Text(
           "Kotak Masuk",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.primaryPink, // Biru Utama
+        backgroundColor: AppColors.primaryPink, 
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -48,12 +48,8 @@ class NotificationView extends GetView<NotificationController> {
     );
   }
 
-  // =============================
-  // WIDGET ITEMS
-  // =============================
 
   Widget _buildNotificationItem(dynamic item) {
-    // Format Tanggal
     final date = DateTime.fromMillisecondsSinceEpoch(item.timestamp);
     final dateString =
         "${date.day}/${date.month} • ${date.hour}:${date.minute.toString().padLeft(2, '0')}";
@@ -74,28 +70,25 @@ class NotificationView extends GetView<NotificationController> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. ICON BULAT
           Container(
             height: 48,
             width: 48,
             decoration: BoxDecoration(
-              color: AppColors.backgroundPink, // Biru sangat muda
+              color: AppColors.backgroundPink, 
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.notifications_rounded,
-              color: AppColors.primaryPink, // Icon Biru
+              color: AppColors.primaryPink, 
               size: 24,
             ),
           ),
           const SizedBox(width: 16),
 
-          // 2. KONTEN TEKS
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header (Judul & Tanggal)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -125,13 +118,12 @@ class NotificationView extends GetView<NotificationController> {
 
                 const SizedBox(height: 6),
 
-                // Isi Pesan
                 Text(
                   item.message,
                   style: TextStyle(
                     color: Colors.grey[700],
                     fontSize: 13,
-                    height: 1.4, // Spasi antar baris agar mudah dibaca
+                    height: 1.4, 
                   ),
                 ),
               ],

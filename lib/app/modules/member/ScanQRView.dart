@@ -15,14 +15,12 @@ class ScanQRView extends GetView<ScanQRController> {
       ),
       body: Stack(
         children: [
-          // KOMPONEN KAMERA
           MobileScanner(
             onDetect: (capture) {
               controller.scanQRCode(capture);
             },
           ),
           
-          // OVERLAY KOTAK (Hiasan biar user tau harus arahin ke mana)
           _buildOverlay(),
 
           Obx(() {
@@ -56,7 +54,7 @@ class ScanQRView extends GetView<ScanQRController> {
           borderRadius: 10,
           borderLength: 30,
           borderWidth: 10,
-          cutOutSize: 300, // Ukuran kotak scan
+          cutOutSize: 300, 
         ),
       ),
     );

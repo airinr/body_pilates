@@ -48,9 +48,7 @@ class UserMenuView extends GetView<UserMenuController> {
         ),
         body: TabBarView(
           children: [
-            // Tab 1: Available Classes
             _buildClassList(isEnrolledTab: false),
-            // Tab 2: Enrolled Classes
             _buildClassList(isEnrolledTab: true),
           ],
         ),
@@ -58,7 +56,6 @@ class UserMenuView extends GetView<UserMenuController> {
     );
   }
 
-  // Helper Widget untuk menangani List Kosong (Agar tidak crash)
   Widget _buildClassList({required bool isEnrolledTab}) {
     return Obx(() {
       if (controller.isLoading.value) {
@@ -67,12 +64,10 @@ class UserMenuView extends GetView<UserMenuController> {
         );
       }
 
-      // Ambil data sesuai tab
       final List<ClassModel> listData = isEnrolledTab
           ? controller.enrolledClasses
           : controller.availableClasses;
 
-      // ⛔ SAFETY CHECK: Agar tidak crash saat data kosong
       if (listData.isEmpty) {
         return Center(
           child: Column(
@@ -95,13 +90,11 @@ class UserMenuView extends GetView<UserMenuController> {
         );
       }
 
-      // Render List (Design Original Kamu)
       return ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: listData.length,
         itemBuilder: (context, index) {
           final kelas = listData[index];
-          // Cek status bayar (hanya relevan untuk tab enrolled)
           bool isPaid = false;
           if (isEnrolledTab) {
             isPaid = _isPaid(kelas);
@@ -125,7 +118,6 @@ class UserMenuView extends GetView<UserMenuController> {
               borderRadius: BorderRadius.circular(16),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
-                // ✅ Panggil Logic Navigasi di Controller
                 onTap: () => controller.onClassClicked(kelas),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -221,11 +213,9 @@ class UserMenuView extends GetView<UserMenuController> {
     });
   }
 
-  // Logic aman untuk cek payment
   bool _isPaid(ClassModel item) {
     try {
       final participant = item.participants[controller.member.uid];
-      // Pastikan participant tidak null dan berbentuk Map
       if (participant != null && participant is Map) {
         return participant['paymentStatus'] == 'Paid';
       }

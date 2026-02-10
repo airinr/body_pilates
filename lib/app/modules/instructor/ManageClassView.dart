@@ -9,7 +9,7 @@ class ManageClassView extends GetView<ManageClassController> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Ubah jadi 2 Tab saja
+      length: 2, 
       child: Scaffold(
         backgroundColor: AppColors.backgroundPink,
         appBar: AppBar(
@@ -40,10 +40,8 @@ class ManageClassView extends GetView<ManageClassController> {
         body: Obx(
           () => TabBarView(
             children: [
-              // TAB 1: FORM EDIT
               _buildDetailTab(context),
 
-              // TAB 2: SEMUA PESERTA (GABUNGAN)
               _buildAllParticipantsTab(),
             ],
           ),
@@ -52,9 +50,6 @@ class ManageClassView extends GetView<ManageClassController> {
     );
   }
 
-  // =============================
-  // TAB 1: DETAIL KELAS
-  // =============================
 
   Widget _buildDetailTab(BuildContext context) {
     return SingleChildScrollView(
@@ -140,7 +135,6 @@ class ManageClassView extends GetView<ManageClassController> {
                             ),
                           );
                           if (picked != null) {
-                            // ignore: use_build_context_synchronously
                             controller.timeController.text = picked.format(
                               context,
                             );
@@ -197,7 +191,6 @@ class ManageClassView extends GetView<ManageClassController> {
 
           const SizedBox(height: 24),
 
-          // DANGER ZONE
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -261,9 +254,6 @@ class ManageClassView extends GetView<ManageClassController> {
     );
   }
 
-  // =============================
-  // TAB 2: SEMUA PESERTA (GABUNGAN)
-  // =============================
 
   Widget _buildAllParticipantsTab() {
     final paid = controller.paidParticipants;
@@ -300,7 +290,6 @@ class ManageClassView extends GetView<ManageClassController> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // 1. LIST SUDAH BAYAR
         if (paid.isNotEmpty) ...[
           _sectionHeader("Peserta Terdaftar", Icons.check_circle_rounded),
           const SizedBox(height: 10),
@@ -308,7 +297,6 @@ class ManageClassView extends GetView<ManageClassController> {
           const SizedBox(height: 20),
         ],
 
-        // 2. LIST BELUM BAYAR
         if (unpaid.isNotEmpty) ...[
           _sectionHeader("Menunggu Pembayaran", Icons.pending_rounded),
           const SizedBox(height: 10),
@@ -382,22 +370,17 @@ class ManageClassView extends GetView<ManageClassController> {
   // =============================
 
   String _getInitials(String name) {
-    // 1. Hapus spasi di awal/akhir agar aman
     final trimmedName = name.trim();
 
-    // 2. Jika nama kosong setelah di-trim, kembalikan "?"
     if (trimmedName.isEmpty) return "?";
 
-    // 3. Split berdasarkan spasi (menggunakan RegExp agar spasi ganda tetap aman)
     List<String> nameSplit = trimmedName.split(RegExp(r'\s+'));
 
-    // 4. Ambil inisial kata pertama
     String initials = "";
     if (nameSplit.isNotEmpty && nameSplit[0].isNotEmpty) {
       initials += nameSplit[0][0];
     }
 
-    // 5. Ambil inisial kata kedua (jika ada)
     if (nameSplit.length > 1 && nameSplit[1].isNotEmpty) {
       initials += nameSplit[1][0];
     }

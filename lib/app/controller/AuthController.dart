@@ -13,13 +13,11 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      // 1. Register ke Firebase Auth
       final credential = await _auth.createUserWithEmailAndPassword(
         email: user.email,
         password: password,
       );
 
-      // 2. Simpan ke Firestore
       final newUser = UserModel(
         uid: credential.user!.uid,
         email: user.email,

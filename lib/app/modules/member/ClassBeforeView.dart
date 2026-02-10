@@ -40,15 +40,11 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
           return const Center(child: Text("Data kelas tidak ditemukan"));
         }
 
-        // Panggil Method Tampilan
         return showClassDetailBefore(kelas);
       }),
     );
   }
 
-  // ==========================================
-  // METHOD SESUAI CLASS DIAGRAM
-  // ==========================================
 
   Widget showClassDetailBefore(ClassModel kelas) {
     return Column(
@@ -58,7 +54,6 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                // --- CARD INFO KELAS ---
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -120,7 +115,6 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
                             const Divider(height: 1),
                             const SizedBox(height: 24),
                             
-                            // Info Row
                             Row(
                               children: [
                                 Expanded(
@@ -167,7 +161,6 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
           ),
         ),
 
-        // --- BOTTOM BAR ---
         Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
@@ -194,7 +187,6 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                // Panggil onPayClick (Navigasi Langsung)
                 onPressed: () => onPayClick(controller.userId, kelas.idClass),
                 
                 child: const Row(
@@ -224,13 +216,10 @@ class ClassBeforeView extends GetView<ClassBeforeController> {
     );
   }
 
-  // 2. Method Navigasi Langsung (Tanpa Controller)
   void onPayClick(String idUser, String idClass) {
-    // Ambil detail kelas dari controller untuk dikirim ke Payment
     final kelas = controller.classDetail.value;
     
     if (kelas != null) {
-      // 🔥 LANGSUNG NAVIGASI DI SINI (VIEW LOGIC)
       Get.toNamed(
         '/payment',
         arguments: {

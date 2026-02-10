@@ -15,7 +15,6 @@ class InstructorModel extends UserModel {
           createdAt: createdAt,
         );
 
-  // Sesuai Class Diagram
   void broadcastMessage(String message) {
     print("Broadcasting: $message");
   }
@@ -34,7 +33,6 @@ class InstructorModel extends UserModel {
       email: data['email'] ?? '',
       fullName: data['fullName'] ?? '',
       username: data['username'] ?? '',
-      // Logic safety check tanggal dipindah ke sini biar rapi
       createdAt: data['createdAt'], 
     );
   }

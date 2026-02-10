@@ -14,14 +14,14 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPink, // Background Biru Muda
+      backgroundColor: AppColors.backgroundPink, 
       appBar: AppBar(
         title: const Text(
           "Dashboard Instruktur",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.primaryPink, // Biru Utama
+        backgroundColor: AppColors.primaryPink,
         elevation: 0,
         foregroundColor: Colors.white,
         actions: [
@@ -90,7 +90,6 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. HEADER: Judul & Harga
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -135,7 +134,6 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
             ),
           ),
 
-          // 2. INFO ROW (Tanggal & Jam)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -150,13 +148,11 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
           const SizedBox(height: 16),
           const Divider(height: 1, color: Color(0xFFEEEEEE)),
 
-          // 3. ACTION BUTTONS (Footer)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Tombol Scan QR
                 _buildActionButton(
                   icon: Icons.qr_code_scanner_rounded,
                   label: "QR Kelas",
@@ -164,7 +160,6 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
                   onTap: () => Get.toNamed('/generateQR', arguments: item),
                 ),
 
-                // Tombol Broadcast
                 _buildActionButton(
                   icon: Icons.campaign_rounded,
                   label: "Broadcast",
@@ -172,7 +167,6 @@ class InstructorMenuView extends GetView<InstructorMenuController> {
                   onTap: () => onBroadcastClicked(item.idClass, item.title),
                 ),
 
-                // Tombol Detail
                 _buildActionButton(
                   icon: Icons.edit_note_rounded,
                   label: "Detail",

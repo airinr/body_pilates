@@ -11,7 +11,7 @@ class GenerateQRView extends GetView<GenerateQRController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors
-          .primaryPink, // Background utama Biru agar kontras dengan kartu putih
+          .primaryPink, 
       appBar: AppBar(
         title: const Text(
           "QR Check-in",
@@ -24,7 +24,7 @@ class GenerateQRView extends GetView<GenerateQRController> {
         leading: IconButton(
           icon: const Icon(
             Icons.close_rounded,
-          ), // Icon close karena ini biasanya modal/fullscreen
+          ),
           onPressed: () => Get.back(),
         ),
       ),
@@ -39,7 +39,6 @@ class GenerateQRView extends GetView<GenerateQRController> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // KARTU QR CODE
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -59,7 +58,6 @@ class GenerateQRView extends GetView<GenerateQRController> {
                   ),
                   child: Column(
                     children: [
-                      // 1. INFO KELAS (Header)
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -115,8 +113,6 @@ class GenerateQRView extends GetView<GenerateQRController> {
 
                       const SizedBox(height: 32),
 
-                      // 2. QR CODE IMAGE
-                      // Kita bungkus QR dengan border tipis agar terlihat rapi
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
@@ -131,8 +127,6 @@ class GenerateQRView extends GetView<GenerateQRController> {
                           version: QrVersions.auto,
                           size: 220,
                           backgroundColor: Colors.white,
-                          // Optional: Menambahkan logo kecil di tengah QR jika diinginkan
-                          // embeddedImage: const AssetImage('assets/logo.png'),
                           eyeStyle: const QrEyeStyle(
                             eyeShape: QrEyeShape.square,
                             color: Colors.black,
@@ -146,7 +140,6 @@ class GenerateQRView extends GetView<GenerateQRController> {
 
                       const SizedBox(height: 32),
 
-                      // 3. INSTRUKSI
                       Text(
                         "Tunjukkan QR ini kepada Member",
                         style: TextStyle(
@@ -167,7 +160,6 @@ class GenerateQRView extends GetView<GenerateQRController> {
 
                 const SizedBox(height: 24),
 
-                // TIP DI LUAR KARTU
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [

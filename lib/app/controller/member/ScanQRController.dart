@@ -11,7 +11,6 @@ class ScanQRController extends GetxController {
   
   late String idClass;
   
-  // Flag ini kuncinya. Selama true, scanner gak bakal proses data baru.
   var isProcessing = false.obs;
 
   MemberModel get member => Get.find<MemberModel>();
@@ -23,15 +22,12 @@ class ScanQRController extends GetxController {
   }
 
   void scanQRCode(BarcodeCapture capture) {
-    // 🛑 1. CEGAH SCAN BERULANG
-    // Kalau dialog sedang muncul (processing=true), abaikan hasil kamera
     if (isProcessing.value) return; 
 
     final List<Barcode> barcodes = capture.barcodes;
     for (final barcode in barcodes) {
       if (barcode.rawValue != null) {
         
-        // Kunci scanner
         isProcessing.value = true;
         
         String rawJson = barcode.rawValue!;
@@ -49,7 +45,6 @@ class ScanQRController extends GetxController {
              );
           }
         } else {
-           // QR Salah
            showResultDialog(
              title: "Gagal", 
              message: "QR Code salah! Ini bukan kelas yang dituju.", 
@@ -80,7 +75,6 @@ class ScanQRController extends GetxController {
         DateTime.now().toIso8601String()
       );
 
-      // ✅ TAMPILKAN DIALOG SUKSES
       showResultDialog(
         title: "Berhasil",
         message: "Check-In kehadiran berhasil dicatat!",
@@ -96,7 +90,6 @@ class ScanQRController extends GetxController {
     }
   }
 
-  // 🔥 METHOD BARU BUAT NAMPILIN ALERT BOX
   void showResultDialog({required String title, required String message, required bool isSuccess}) {
     Get.defaultDialog(
       title: title,

@@ -54,7 +54,6 @@ class InstructorMenuController extends GetxController {
     );
   }
 
-  // Method baru untuk proses logout
   void logout() {
     Get.defaultDialog(
       title: "Logout",
@@ -69,7 +68,6 @@ class InstructorMenuController extends GetxController {
 
           Get.delete<InstructorModel>(force: true);
 
-          // 4. Balik ke halaman login
           Get.offAllNamed('/login');
         } catch (e) {
           Get.snackbar("Error", "Gagal logout: $e");
@@ -79,7 +77,6 @@ class InstructorMenuController extends GetxController {
   }
 
   void showBroadcastDialog(String idClass, String className) {
-    // 1. Siapkan controller buat nangkep inputan
     final titleController = TextEditingController();
     final messageController = TextEditingController();
 
@@ -114,7 +111,6 @@ class InstructorMenuController extends GetxController {
 
           ElevatedButton(
             onPressed: () {
-              // 1. Validasi di sini sebelum lanjut
               if (titleController.text.trim().isEmpty ||
                   messageController.text.trim().isEmpty) {
                 Get.snackbar(
@@ -123,24 +119,21 @@ class InstructorMenuController extends GetxController {
                   backgroundColor: Colors.orange,
                   colorText: Colors.white,
                 );
-                return; // Berhenti di sini, jangan lanjut ke bawah
+                return; 
               }
 
-              // 2. Kalau valid, baru kirim
               sendBroadcast(
                 idClass,
                 titleController.text,
                 messageController.text,
               );
 
-              // 3. Tutup dialog
               Get.back();
 
-              // 4. Munculkan snackbar sukses (Gunakan $ untuk variabel)
               Get.snackbar(
                 'Sukses',
-                'Pesan telah terkirim ke kelas $className', // Gunakan $ bukan {}
-                backgroundColor: Colors.green, // Sebaiknya hijau untuk sukses
+                'Pesan telah terkirim ke kelas $className',
+                backgroundColor: Colors.green, 
                 colorText: Colors.white,
               );
             },

@@ -29,7 +29,6 @@ class AddClassView extends GetView<AddClassController> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              // HEADER ILLUSTRATION (Opsional, agar tidak sepi)
               Container(
                 margin: const EdgeInsets.only(bottom: 20),
                 padding: const EdgeInsets.all(16),
@@ -44,7 +43,6 @@ class AddClassView extends GetView<AddClassController> {
                 ),
               ),
 
-              // FORM CARD
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -72,7 +70,6 @@ class AddClassView extends GetView<AddClassController> {
                       ),
                       const SizedBox(height: 20),
 
-                      // 1. NAMA KELAS
                       _buildTextField(
                         label: 'Nama Kelas',
                         hint: 'Contoh: Yoga Pagi',
@@ -82,7 +79,6 @@ class AddClassView extends GetView<AddClassController> {
 
                       const SizedBox(height: 16),
 
-                      // 2. ROW: TANGGAL & WAKTU (Side by Side)
                       Row(
                         children: [
                           Expanded(
@@ -158,7 +154,6 @@ class AddClassView extends GetView<AddClassController> {
 
                       const SizedBox(height: 16),
 
-                      // 3. HARGA
                       _buildTextField(
                         label: 'Harga Tiket',
                         controller: controller.priceC,
@@ -169,7 +164,6 @@ class AddClassView extends GetView<AddClassController> {
 
                       const SizedBox(height: 32),
 
-                      // 4. BUTTON SIMPAN
                       SizedBox(
                         width: double.infinity,
                         height: 55,
@@ -215,7 +209,6 @@ class AddClassView extends GetView<AddClassController> {
     );
   }
 
-  // Helper Widget untuk Input Field yang lebih cantik
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
@@ -248,9 +241,9 @@ class AddClassView extends GetView<AddClassController> {
             controller: controller,
             keyboardType: keyboard,
             readOnly:
-                readOnly, // Jika isClickable=true, TextField harus readonly agar keyboard tidak muncul
+                readOnly, 
             enabled:
-                !isClickable, // Trik UI: jika clickable (Date/Time), disable textfield native interaction
+                !isClickable, 
             style: const TextStyle(fontWeight: FontWeight.w600),
             decoration: InputDecoration(
               hintText: hint,
@@ -267,7 +260,7 @@ class AddClassView extends GetView<AddClassController> {
                   ? Icon(icon, color: AppColors.primaryPink)
                   : null,
               filled: true,
-              fillColor: Colors.grey[50], // Background field abu sangat muda
+              fillColor: Colors.grey[50], 
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 16,
@@ -288,7 +281,6 @@ class AddClassView extends GetView<AddClassController> {
                 ),
               ),
               disabledBorder: OutlineInputBorder(
-                // Style saat isClickable = true (tapi TextField disabled)
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade200),
               ),

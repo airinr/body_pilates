@@ -9,15 +9,13 @@ class ClassAfterView extends GetView<ClassAfterController> {
 
   @override
   Widget build(BuildContext context) {
-    // Warna tema utama (bisa disesuaikan dengan branding)
-    final Color primaryColor = const Color(0xFF2563EB); // Royal Blue
-    final Color accentColor = const Color(0xFFEFF6FF); // Light Blue bg
+    final Color primaryColor = const Color(0xFF2563EB); 
+    final Color accentColor = const Color(0xFFEFF6FF); 
 
     return Scaffold(
       backgroundColor: accentColor,
       body: Stack(
         children: [
-          // 1. BACKGROUND DEKORATIF (Gradient Header)
           Container(
             height: 280,
             decoration: BoxDecoration(
@@ -33,11 +31,9 @@ class ClassAfterView extends GetView<ClassAfterController> {
             ),
           ),
 
-          // 2. KONTEN UTAMA
           SafeArea(
             child: Column(
               children: [
-                // Custom App Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -63,14 +59,13 @@ class ClassAfterView extends GetView<ClassAfterController> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 48), // Spacer penyeimbang
+                      const SizedBox(width: 48), 
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 10),
 
-                // BODY CONTENT
                 Expanded(
                   child: Obx(() {
                     if (controller.isLoading.value) {
@@ -108,7 +103,6 @@ class ClassAfterView extends GetView<ClassAfterController> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
-          // --- KARTU TIKET ---
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -123,13 +117,11 @@ class ClassAfterView extends GetView<ClassAfterController> {
             ),
             child: Column(
               children: [
-                // BAGIAN ATAS TIKET (Detail Kelas)
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Badge Status
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -160,14 +152,13 @@ class ClassAfterView extends GetView<ClassAfterController> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Info Grid (Tanggal & Waktu)
                       Row(
                         children: [
                           Expanded(
                             child: _buildInfoBox(
                               icon: Icons.calendar_month,
                               title: "TANGGAL",
-                              value: kelas.date, // Format: 12 Okt 2024
+                              value: kelas.date, 
                               color: Colors.blue.shade50,
                               iconColor: Colors.blue,
                             ),
@@ -177,7 +168,7 @@ class ClassAfterView extends GetView<ClassAfterController> {
                             child: _buildInfoBox(
                               icon: Icons.access_time_filled,
                               title: "JAM",
-                              value: kelas.time, // Format: 09:00 AM
+                              value: kelas.time, 
                               color: Colors.orange.shade50,
                               iconColor: Colors.orange,
                             ),
@@ -188,15 +179,13 @@ class ClassAfterView extends GetView<ClassAfterController> {
                   ),
                 ),
 
-                // GARIS PUTUS-PUTUS (Divider Tiket)
                 _buildDashedDivider(),
 
-                // BAGIAN BAWAH TIKET (QR / Action Area)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: const BoxDecoration(
-                    color: Colors.white, // Tetap putih
+                    color: Colors.white, 
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(24),
                     ),
@@ -242,7 +231,6 @@ class ClassAfterView extends GetView<ClassAfterController> {
     );
   }
 
-  // --- WIDGET KOMPONEN ---
 
   Widget _buildScanButtonElegant(String idClass, Color color) {
     return SizedBox(
@@ -282,7 +270,7 @@ class ClassAfterView extends GetView<ClassAfterController> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFFECFDF5), // Emerald 50
+        color: const Color(0xFFECFDF5), 
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFF10B981).withOpacity(0.3)),
       ),
@@ -396,7 +384,6 @@ class ClassAfterView extends GetView<ClassAfterController> {
               );
             },
           ),
-          // Lingkaran "sobekan" kiri
           Positioned(
             left: -15,
             child: Container(
@@ -405,12 +392,11 @@ class ClassAfterView extends GetView<ClassAfterController> {
               decoration: const BoxDecoration(
                 color: Color(
                   0xFFEFF6FF,
-                ), // Harus sama dengan background scaffold
+                ), 
                 shape: BoxShape.circle,
               ),
             ),
           ),
-          // Lingkaran "sobekan" kanan
           Positioned(
             right: -15,
             child: Container(
@@ -419,7 +405,7 @@ class ClassAfterView extends GetView<ClassAfterController> {
               decoration: const BoxDecoration(
                 color: Color(
                   0xFFEFF6FF,
-                ), // Harus sama dengan background scaffold
+                ), 
                 shape: BoxShape.circle,
               ),
             ),

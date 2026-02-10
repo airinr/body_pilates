@@ -31,14 +31,12 @@ class RegisterController extends GetxController {
     try {
       isLoading.value = true;
 
-      // 1️⃣ Register ke Firebase Auth
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
           );
 
-      // 2️⃣ Simpan data user ke Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'name': nameController.text,
@@ -50,15 +48,14 @@ class RegisterController extends GetxController {
 
       isLoading.value = false;
 
-      // 3️⃣ Popup sukses
       Get.defaultDialog(
         title: "Berhasil 🎉",
         middleText: "Akun berhasil dibuat. Silakan login.",
         textConfirm: "OK",
         confirmTextColor: Colors.white,
         onConfirm: () {
-          Get.back(); // tutup dialog
-          Get.back(); // kembali ke Login page
+          Get.back(); 
+          Get.back(); 
         },
       );
     } catch (e) {

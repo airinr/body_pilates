@@ -25,7 +25,6 @@ class ClassBeforeController extends GetxController {
     loadClassDetailBefore(idClass);
   }
 
-  // 1. loadClassDetailBefore(idClass)
   void loadClassDetailBefore(String idClass) async {
     isLoading.value = true;
     try {
@@ -45,10 +44,7 @@ class ClassBeforeController extends GetxController {
     }
   }
 
-  // 2. addClassMember(idClass, idUser)
-  // FUNGSI: Menyimpan data peserta ke database (Dipanggil oleh PaymentController nanti)
   Future<void> addClassMember(String idClass, String idUser) async {
-    // Simpan ke Realtime Database (Participants Class)
     await _db.child(idClass).child('participants').child(idUser).set({
       'memberId': idUser,
       'memberName': member.fullName,
@@ -56,12 +52,10 @@ class ClassBeforeController extends GetxController {
       'paymentStatus': 'Paid',
     });
 
-    // Simpan ke Firestore (User Profile - Riwayat Kelas)
     await FirebaseFirestore.instance.collection('users').doc(idUser).set({
       'enrolledClassIds': FieldValue.arrayUnion([idClass]),
     }, SetOptions(merge: true));
 
-    // Update data lokal di MemberModel (Memory)
     member.enrollClass(idClass);
   }
 }

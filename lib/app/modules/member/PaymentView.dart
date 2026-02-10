@@ -8,7 +8,6 @@ class PaymentView extends GetView<PaymentController> {
 
   @override
   Widget build(BuildContext context) {
-    // Sesuai Diagram: Entry point UI
     return paymentPage();
   }
 
@@ -37,7 +36,6 @@ class PaymentView extends GetView<PaymentController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Rincian Pesanan
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -62,7 +60,6 @@ class PaymentView extends GetView<PaymentController> {
                     const Text("Metode Pembayaran", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     
-                    // Dropdown Metode
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
@@ -82,7 +79,6 @@ class PaymentView extends GetView<PaymentController> {
               ),
             ),
             
-            // Tombol Bayar
             Container(
               padding: const EdgeInsets.all(24),
               color: Colors.white,
@@ -94,7 +90,6 @@ class PaymentView extends GetView<PaymentController> {
                     backgroundColor: AppColors.primaryPink,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  // Sesuai Diagram: onPayClicked
                   onPressed: () => onPayClicked(controller.selectedPaymentMethod.value),
                   child: const Text("Konfirmasi Pembayaran", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
@@ -113,13 +108,10 @@ class PaymentView extends GetView<PaymentController> {
     ]);
   }
 
-  // Method sesuai Diagram
   void onPayClicked(String method) {
-    // Memanggil fungsi transaksi di controller
     controller.createTransaction();
   }
   
-  // Method tambahan sesuai diagram (opsional/placeholder)
   void showVirtualAccount(String vaNumber) {
     // Logic dialog VA jika perlu
   }
